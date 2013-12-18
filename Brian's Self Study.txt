@@ -1,0 +1,16 @@
+
+Finished:
+
+Unity - Editor: Beginner 1-2
+
+
+
+To-do:
+
+http://zetcode.com/tutorials/javagamestutorial/breakout/
+
+http://unity3d.com/learn/tutorials/projects
+https://www.assetstore.unity3d.com/#/content/7677
+https://www.assetstore.unity3d.com/#/content/11228
+http://pixelnest.io/tutorials/2d-game-unity/table-of-contents/
+http://noobtuts.com/unity-2d-pong-game-step-1-introduction 	(maybe)
