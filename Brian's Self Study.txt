@@ -1,7 +1,8 @@
 
 Finished:
 
-Unity - Editor: Beginner 1-2
+Unity - Editor: Beginner 1-10
+Unity - Project #00 Roll-a-Ball
 
 
 
@@ -10,7 +11,9 @@ To-do:
 http://zetcode.com/tutorials/javagamestutorial/breakout/
 
 http://unity3d.com/learn/tutorials/projects
-https://www.assetstore.unity3d.com/#/content/7677
-https://www.assetstore.unity3d.com/#/content/11228
+http://unity3d.com/learn/tutorials/modules/beginner/2d   <---- They added this today
 http://pixelnest.io/tutorials/2d-game-unity/table-of-contents/
+
+https://www.assetstore.unity3d.com/#/content/7677		(maybe)
+https://www.assetstore.unity3d.com/#/content/11228		(maybe)
 http://noobtuts.com/unity-2d-pong-game-step-1-introduction 	(maybe)
