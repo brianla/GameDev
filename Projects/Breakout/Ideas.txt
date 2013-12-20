@@ -1,0 +1,26 @@
+
+
+background
+levels
+scores (timed)
+lives
+retry/restart
+start screen
+
+
+
+
+-- powerups --
+
+enlarge
+ball invisible
+invert movement
+invert screen
+guns
+space invader
+more balls
+enlarge ball / bulldozing ball
+speed up/slow down ball
+catch ball
+
+more blocks (moving)
