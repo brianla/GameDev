@@ -28,6 +28,7 @@ public class Board extends JPanel implements Commons {
     Ball ball;
     Paddle paddle;
     Brick bricks[];
+    Background bg;
     int lives;
     int gtime;
 
@@ -39,7 +40,7 @@ public class Board extends JPanel implements Commons {
 
         addKeyListener(new TAdapter());
         
-        setBackground(Color.white);
+     //   setBackground(Color.white);
        
         setFocusable(true);
 
@@ -60,6 +61,7 @@ public class Board extends JPanel implements Commons {
 
         ball = new Ball();
         paddle = new Paddle();
+        bg = new Background();
         lives = 3;
 
         int k = 0;
@@ -76,6 +78,8 @@ public class Board extends JPanel implements Commons {
         super.paint(g);
 
         if (ingame) {
+        	g.drawImage(bg.getImage(), bg.getX(), bg.getY(),
+        				bg.getWidth(), bg.getHeight(), this);
         	
         	
             g.drawImage(ball.getImage(), ball.getX(), ball.getY(),
