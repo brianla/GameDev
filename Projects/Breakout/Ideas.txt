@@ -1,26 +1,37 @@
 
+-- items --
 
-background
-levels
-scores (timed)
-lives
-retry/restart
-start screen
-
-
-
-
--- powerups --
-
-enlarge
-ball invisible
-invert movement
-invert screen
+enlarge paddle
+catch ball
+invert paddle movement
 guns
-space invader
+
 more balls
 enlarge ball / bulldozing ball
 speed up/slow down ball
-catch ball
+invisible ball
 
-more blocks (moving)
+invisible bricks
+more bricks (moving)
+
+invert screen
+
+
+
+-- optional --
+
+retry/restart
+start screen
+
+levels
+space invader
+
+
+
+
+
+----- finished -----
+
+background (image)
+lives
+time score
