@@ -1,0 +1,14 @@
+package breakout;
+
+import java.awt.event.KeyEvent;
+
+import javax.swing.ImageIcon;
+
+
+public interface Paddle extends Commons {
+    
+    public void move();
+    public void keyPressed(KeyEvent e);
+    public void keyReleased(KeyEvent e);
+    public void resetState();
+}

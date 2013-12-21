@@ -19,7 +19,7 @@ public class Ball extends Sprite implements Commons {
      image = ii.getImage();
 
      width = image.getWidth(null);
-     heigth = image.getHeight(null);
+     height = image.getHeight(null);
 
      resetState();
     }

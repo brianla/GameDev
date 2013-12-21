@@ -8,7 +8,7 @@ public class Sprite {
     protected int x;
     protected int y;
     protected int width;
-    protected int heigth;
+    protected int height;
     protected Image image;
 
 
@@ -33,7 +33,7 @@ public class Sprite {
     }
 
     public int getHeight() {
-        return heigth;
+        return height;
     }
 
     Image getImage()

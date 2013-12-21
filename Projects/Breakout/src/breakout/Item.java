@@ -11,16 +11,15 @@ public class Item extends Sprite implements Commons {
 	   public Item(int x, int y) {
 		 this.x = x;
 		 this.y = y;
-	     ydir = 1;
+	     ydir = 2;
 
 	     ImageIcon ii = new ImageIcon(this.getClass().getResource(item));
 	     image = ii.getImage();
 
 	     width = image.getWidth(null);
-	     heigth = image.getHeight(null);
+	     height = image.getHeight(null);
 
 	    }
-
 
 	    public void move()
 	    {

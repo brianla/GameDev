@@ -5,33 +5,28 @@ import java.awt.event.KeyEvent;
 import javax.swing.ImageIcon;
 
 
-public class Paddle extends Sprite implements Commons {
-
-    String paddle = "paddle.png";
+public class Paddle extends Sprite implements Commons{
 
     int dx;
+    private boolean inverted;
 
-    public Paddle() {
-
-        ImageIcon ii = new ImageIcon(this.getClass().getResource(paddle));
-        image = ii.getImage();
-
-        width = image.getWidth(null);
-        heigth = image.getHeight(null);
-
-        resetState();
-
-    }
 
     public void move() {
-        x += dx;
+    	if(inverted) 
+    		x-= dx;
+    	else
+    		x += dx;
         if (x <= 2) 
           x = 2;
-        if (x >= Commons.PADDLE_RIGHT)
-          x = Commons.PADDLE_RIGHT;
+        if (x >= Commons.WIDTH - this.width - 10)
+          x = Commons.WIDTH - this.width - 10; 
     }
 
-    public void keyPressed(KeyEvent e) {
+	public void setInverted(boolean inverted) {
+		this.inverted = inverted;
+	}
+
+	public void keyPressed(KeyEvent e) {
 
         int key = e.getKeyCode();
 
@@ -58,7 +53,7 @@ public class Paddle extends Sprite implements Commons {
     }
 
     public void resetState() {
-        x = 200;
+        x = (Commons.WIDTH - this.width)/2;
         y = 360;
     }
 }
