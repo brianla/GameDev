@@ -1,15 +1,12 @@
 
 -- items --
 
-enlarge paddle
 catch ball
-invert paddle movement
+shrink paddle
 guns
 
 more balls
 enlarge ball / bulldozing ball
-speed up/slow down ball
-invisible ball
 
 invisible bricks
 more bricks (moving)
@@ -35,3 +32,20 @@ space invader
 background (image)
 lives
 time score
+
+
+enlarge paddle
+invert paddle movement
+blinking ball
+more lives
+lose lives
+speed up ball
+slow down ball
+
+
+
+
+
+
+
+
