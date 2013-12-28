@@ -47,8 +47,21 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\CameraFollow.cs" />
+     <Compile Include="Assets\Scripts\EnemyScript.cs" />
+     <Compile Include="Assets\Scripts\HealthScript.cs" />
      <Compile Include="Assets\Scripts\MoveScript.cs" />
      <Compile Include="Assets\Scripts\PlayerScript.cs" />
+     <Compile Include="Assets\Scripts\ShotScript.cs" />
+     <Compile Include="Assets\Scripts\WeaponScript.cs" />
+     <None Include="Assets\Textures\Platformer Pack\LICENSE.txt" />
+     <None Include="Assets\Textures\Platformer Pack\tiles_spritesheet.txt" />
+     <None Include="Assets\Textures\Platformer Pack\Enemies\enemies_spritesheet.txt" />
+     <None Include="Assets\Textures\Platformer Pack\HUD\hud_spritesheet.txt" />
+     <None Include="Assets\Textures\Platformer Pack\README.txt" />
+     <None Include="Assets\Textures\Platformer Pack\AWESOME_PEOPLE.txt" />
+     <None Include="Assets\Textures\Platformer Pack\Player\p2_spritesheet.txt" />
+     <None Include="Assets\Textures\Platformer Pack\Player\p3_spritesheet.txt" />
+     <None Include="Assets\Textures\Platformer Pack\Player\p1_spritesheet.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
