@@ -1,0 +1,12 @@
+
+----- 12/29/2013 Patch Notes ----- 
+
+Fixed console errors that appears after player is destroyed
+	(CameraFollow.cs)
+
+Added knockback effect
+Added invulnerability
+Added blinking when invulnerable
+	(HealthScript.cs)
+
+
