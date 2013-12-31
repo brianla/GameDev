@@ -37,10 +37,7 @@ public class CameraFollow : MonoBehaviour
 
 	void FixedUpdate ()
 	{
-// Stop tracking once player is dead
-		if(player != null) {
-			TrackPlayer();
-		}
+		TrackPlayer();
 	}
 	
 	
