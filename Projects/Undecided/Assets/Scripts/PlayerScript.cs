@@ -3,7 +3,7 @@ using System.Collections;
 
 public class PlayerScript : MonoBehaviour {
 
-    private bool isGrounded = false;
+    public bool isGrounded = false;
     private Vector2 movement, jumpMovement;
     public float jumpHeight = 1000f;
     public float speed = 8.0f;
