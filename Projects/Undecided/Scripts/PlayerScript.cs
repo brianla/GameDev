@@ -9,13 +9,36 @@ public class PlayerScript : MonoBehaviour {
     public float speed = 8.0f;
     private bool facingRight = true;
 
+	private bool onHillLeft = false;
+	private bool onHillRight = false;
+	private float oldX, distX;
+
     void FixedUpdate()
     {
         float inputX = Input.GetAxis("Horizontal");
 
         isGrounded = (rigidbody2D.velocity.y == 0);
 
+		oldX = transform.position.x;
         transform.position += transform.right * inputX * speed * Time.deltaTime;
+
+		distX = transform.position.x - oldX;
+
+		if((onHillLeft && distX < 0) || 
+		   (onHillRight && distX > 0))
+		{
+			isGrounded |= true;
+
+			if(distX > 0) 
+				distX = -distX;
+
+			transform.position = new Vector3(
+				transform.position.x, 
+				transform.position.y + distX,
+				transform.position.z);
+		}
+
+
 
 		if(Input.GetButton("Jump") && isGrounded){
 			Jump();
@@ -63,6 +86,31 @@ public class PlayerScript : MonoBehaviour {
         theScale.x *= -1;
         transform.localScale = theScale;
     }
+
+	void OnCollisionEnter2D(Collision2D c)
+	{
+		if(c.gameObject.CompareTag("HillLeft"))
+		{
+			onHillLeft = true;
+		}
+		else if(c.gameObject.CompareTag("HillRight"))
+		{
+			onHillRight = true;
+		}
+
+	}
+
+	void OnCollisionExit2D(Collision2D c)
+	{
+		if(c.gameObject.CompareTag("HillLeft"))
+		{
+			onHillLeft = false;
+		}
+		else if(c.gameObject.CompareTag("HillRight"))
+		{
+			onHillRight = false;
+		}
+	}
 
 	public bool Grounded()
 	{
