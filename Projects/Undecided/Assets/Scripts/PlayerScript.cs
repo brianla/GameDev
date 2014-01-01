@@ -3,7 +3,7 @@ using System.Collections;
 
 public class PlayerScript : MonoBehaviour {
 
-    public bool isGrounded = false;
+    private bool isGrounded = false;
     private Vector2 movement, jumpMovement;
     public float jumpHeight = 1000f;
     public float speed = 8.0f;
@@ -63,4 +63,9 @@ public class PlayerScript : MonoBehaviour {
         theScale.x *= -1;
         transform.localScale = theScale;
     }
+
+	public bool Grounded()
+	{
+		return isGrounded;
+	}
 }
