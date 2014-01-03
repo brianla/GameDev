@@ -16,3 +16,17 @@ Added blinking when invulnerable
 Added one-way platform functionality (Need to tag platforms)
 	(OneWayPlatScript.cs, PlayerScript.cs)
 
+
+
+----- 1/3/2014 Patch Notes ----- 
+
+Cleaned coding for red key 
+	(PlayerScript.cs, can remove - redKey.cs)
+
+Fixed cave tile placements (Some had floating values)
+Fixed sprite tiles for floating platforms
+Added floating platforms after hills
+
+
+
+
