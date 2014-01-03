@@ -19,9 +19,10 @@ public class OneWayPlatScript : MonoBehaviour {
 	void OnTriggerEnter2D(Collider2D other) 
 	{
 		if(other.gameObject.CompareTag("OneWayPlatform") && body.velocity.y <= 0) {
-			if(plat1 != null) {
-				plat2 = plat1;
+			if(plat2 != null) {
+				plat2.isTrigger = true;
 			}
+            plat2 = plat1;
 			plat1 = other;
 			plat1.isTrigger = false;
 			body.velocity = new Vector3(body.velocity.x, 0);

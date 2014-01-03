@@ -19,6 +19,8 @@ public class WeaponScript : MonoBehaviour
     /// </summary>
     public float shootingRate = 0.25f;
 
+    public int shotdmg = 1;
+
     //--------------------------------
     // 2 - Cooldown
     //--------------------------------
@@ -61,6 +63,7 @@ public class WeaponScript : MonoBehaviour
             ShotScript shot = shotTransform.gameObject.GetComponent<ShotScript>();
             if (shot != null)
             {
+                shot.damage = shotdmg;
                 shot.isEnemyShot = isEnemy;
             }
 

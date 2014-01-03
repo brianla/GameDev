@@ -74,7 +74,7 @@ public class HealthScript : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter2D(Collision2D c)
+    void OnCollisionStay2D(Collision2D c)
     {
         if (c.gameObject.CompareTag("Lava"))
         {
@@ -84,6 +84,31 @@ public class HealthScript : MonoBehaviour
             else
             {
                 gameObject.SetActive(false);
+            }
+        }
+        if (c.gameObject.CompareTag("Enemy"))
+        {
+            if (!isEnemy && !playerHit)
+            {
+                WeaponScript weapon = c.gameObject.GetComponent<WeaponScript>();
+                hp -= weapon.shotdmg;
+                if (hp <= 0)
+                {
+                    Destroy(gameObject);
+                }
+                // Knockback effect to Player
+                if (!isEnemy)
+                {
+
+                    playerHit = true;
+                    timeHit = Time.time;
+
+                    // If shot is moving left, then knockback to the left
+                    if (rigidbody2D.velocity.x < 0)
+                        Knockback(false);
+                    else
+                        Knockback(true);
+                }
             }
         }
 

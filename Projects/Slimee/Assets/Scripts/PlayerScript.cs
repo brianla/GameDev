@@ -12,6 +12,7 @@ public class PlayerScript : MonoBehaviour {
 	private bool onHillLeft = false;
 	private bool onHillRight = false;
 	private float oldX, distX;
+    public bool redKey = false;
 
     void FixedUpdate()
     {
@@ -27,7 +28,6 @@ public class PlayerScript : MonoBehaviour {
 		if((onHillLeft && distX < 0) || 
 		   (onHillRight && distX > 0))
 		{
-			isGrounded |= true;
 
 			if(distX > 0) 
 				distX = -distX;
@@ -112,6 +112,20 @@ public class PlayerScript : MonoBehaviour {
 		}
 	}
 
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("RedKey"))
+        {
+            redKey = true;
+        }
+        if (other.gameObject.CompareTag("RedDoor"))
+        {
+            if (redKey)
+            {
+                Destroy(other.gameObject.transform.parent.gameObject);
+            }
+        }
+    }
 	public bool Grounded()
 	{
 		return isGrounded;
