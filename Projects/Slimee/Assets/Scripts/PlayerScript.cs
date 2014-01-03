@@ -25,8 +25,7 @@ public class PlayerScript : MonoBehaviour {
 
 		distX = transform.position.x - oldX;
 
-		if((onHillLeft && distX < 0) || 
-		   (onHillRight && distX > 0))
+		if((onHillLeft && distX < 0) || (onHillRight && distX > 0))
 		{
 
 			if(distX > 0) 
@@ -117,6 +116,7 @@ public class PlayerScript : MonoBehaviour {
         if (other.gameObject.CompareTag("RedKey"))
         {
             redKey = true;
+			Destroy(other.gameObject);
         }
         if (other.gameObject.CompareTag("RedDoor"))
         {
