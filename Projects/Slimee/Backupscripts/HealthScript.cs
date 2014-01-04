@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 /// <summary>
 /// Handle hitpoints and damages
@@ -17,7 +17,7 @@ public class HealthScript : MonoBehaviour
 
 
 
-// Knockback distance
+	// Knockback distance
 	public float knockbackX = 100f;
 	public float knockbackY = 1000f;
 	
@@ -74,7 +74,7 @@ public class HealthScript : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter2D(Collision2D c)
+    void OnCollisionStay2D(Collision2D c)
     {
         if (c.gameObject.CompareTag("Lava"))
         {
@@ -86,16 +86,51 @@ public class HealthScript : MonoBehaviour
                 gameObject.SetActive(false);
             }
         }
+        if (c.gameObject.CompareTag("Enemy"))
+        {
+            if (!isEnemy && !playerHit)
+            {
+                WeaponScript weapon = c.gameObject.GetComponent<WeaponScript>();
+                hp -= weapon.shotdmg;
+                if (hp <= 0)
+                {
+                    Destroy(gameObject);
+                }
+                // Knockback effect to Player
+                if (!isEnemy)
+                {
+
+                    playerHit = true;
+                    timeHit = Time.time;
+
+                    // If shot is moving left, then knockback to the left
+                    if (rigidbody2D.velocity.x < 0)
+                        Knockback(false);
+                    else
+                        Knockback(true);
+                }
+            }
+        }
 
     }
 	void Knockback(bool isRight) {
 		Vector3 horizontalKB = transform.right;
 		
-		if (!isRight) {
+		if (!isRight) 
+		{
 			horizontalKB *= -1;
 		}
-		
-		this.rigidbody2D.AddForce((horizontalKB * knockbackX) + (transform.up * knockbackY));
+
+		PlayerScript player = GetComponent<PlayerScript>();
+
+		if(player.Grounded()) 
+		{
+			this.rigidbody2D.AddForce((horizontalKB * knockbackX) + (transform.up * knockbackY));
+		}
+		else
+		{
+			this.rigidbody2D.AddForce(horizontalKB * knockbackX);
+		}
 	}
 
 	void Invulnerable() {
