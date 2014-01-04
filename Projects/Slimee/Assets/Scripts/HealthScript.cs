@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 /// <summary>
 /// Handle hitpoints and damages
@@ -17,7 +17,7 @@ public class HealthScript : MonoBehaviour
 
 
 
-// Knockback distance
+	// Knockback distance
 	public float knockbackX = 100f;
 	public float knockbackY = 1000f;
 	
@@ -116,11 +116,21 @@ public class HealthScript : MonoBehaviour
 	void Knockback(bool isRight) {
 		Vector3 horizontalKB = transform.right;
 		
-		if (!isRight) {
+		if (!isRight) 
+		{
 			horizontalKB *= -1;
 		}
-		
-		this.rigidbody2D.AddForce((horizontalKB * knockbackX) + (transform.up * knockbackY));
+
+		PlayerScript player = GetComponent<PlayerScript>();
+
+		if(player.Grounded()) 
+		{
+			this.rigidbody2D.AddForce((horizontalKB * knockbackX) + (transform.up * knockbackY));
+		}
+		else
+		{
+			this.rigidbody2D.AddForce(horizontalKB * knockbackX);
+		}
 	}
 
 	void Invulnerable() {
