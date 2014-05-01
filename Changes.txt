@@ -28,5 +28,6 @@ Fixed sprite tiles for floating platforms
 Added floating platforms after hills
 
 
+----- 1/5/2014 Patch Notes ----- 
 
-
+Fixed NullReferenceException by removing EnemyScript1.cs from Enemy2_0
