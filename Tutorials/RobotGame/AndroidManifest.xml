@@ -1,0 +1,30 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.daviancorp.robotgame"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+   <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <uses-sdk
+       android:minSdkVersion="8"
+       android:targetSdkVersion="19" />
+
+    <application
+       android:icon="@drawable/icon"
+       android:label="RobotGame" >
+        <activity
+           android:name="com.daviancorp.robotgame.SampleGame"
+           android:configChanges="keyboard|keyboardHidden|orientation"
+           android:label="RobotGame"
+           android:screenOrientation="landscape" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
