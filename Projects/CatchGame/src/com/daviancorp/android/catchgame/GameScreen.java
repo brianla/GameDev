@@ -2,7 +2,7 @@ package com.daviancorp.android.catchgame;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
+import java.util.Random;
 
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -20,12 +20,24 @@ public class GameScreen extends Screen {
 
 	GameState state = GameState.Ready;
 
+	private final static int NUM_COLUMNS = 4;
+	private final static int SPAWN_SPEED_GAP = 50;
+	private final static int MIN_SPAWN_SPEED = 50;
+	private final static int MAX_SPAWN_SPEED = 100;
+	;
+	private final static int OBJECT_SPEED_GAP = 5;
+	private final static int MIN_OBJECT_SPEED = 5;
+	
+	private final static int GOOD_TO_BAD_RATIO = 75;
 	// Variable Setup
 	private Image good, bad;
 
-	private ArrayList tileobjects = new ArrayList();
+	private ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
 
-	int score;
+	private Random rand = new Random();
+	private float timer;
+	private int score;
+	
 	Paint paint, paint2;
 
 	public GameScreen(Game game) {
@@ -43,12 +55,13 @@ public class GameScreen extends Screen {
 		paint.setColor(Color.WHITE);
 
 		paint2 = new Paint();
-		paint2.setTextSize(100);
+		paint2.setTextSize(70);
 		paint2.setTextAlign(Paint.Align.CENTER);
 		paint2.setAntiAlias(true);
 		paint2.setColor(Color.WHITE);
 
 		score = 0;
+		timer = MIN_SPAWN_SPEED + SPAWN_SPEED_GAP * rand.nextFloat();
 	}
 
 	@Override
@@ -95,53 +108,54 @@ public class GameScreen extends Screen {
 				if (inBounds(event, 0, 0, 65, 65)) {
 					state = GameState.Paused;
 				}
+				
+				// Pressed a game object
+				for (int j = gameObjects.size()-1; j >= 0; j--) {
+					GameObject g = gameObjects.get(j);
+					
+					if (inBounds(event, g.getX(), g.getY(), g.getWidth(), g.getHeight())) {
+
+						if (g instanceof GoodObject) {
+							score += g.getPoints();
+							gameObjects.remove(j);
+						}
+						else if (g instanceof BadObject) {
+							state = GameState.GameOver;
+						}
+					}		
+				}
 			}
 
 			if (event.type == TouchEvent.TOUCH_UP) {
 				
 			}
-
 		}
 
 		// 2. Check miscellaneous events like death:
 
-/* REMOVE
- * 		if (livesLeft == 0) {
-			state = GameState.GameOver;
-		}
-*/
+
 		// 3. Call individual update() methods here.
 		// This is where all the game updates happen.
 
-/* REMOVE
- * 		robot.update();
-		if (robot.isJumped()) {
-			currentSprite = Assets.characterJump;
-		} else if (robot.isJumped() == false && robot.isDucked() == false) {
-			currentSprite = anim.getImage();
-		}
-
-		ArrayList projectiles = robot.getProjectiles();
-		for (int i = 0; i < projectiles.size(); i++) {
-			Projectile p = (Projectile) projectiles.get(i);
-			if (p.isVisible() == true) {
-				p.update();
-			} else {
-				projectiles.remove(i);
+		// Check if any good object reached the bottom
+		for (int j = 0; j < gameObjects.size(); j++) {
+			GameObject g = gameObjects.get(j);
+			g.update();
+			
+			if ((g instanceof GoodObject) && (g.getY() > 800)) {
+				state = GameState.GameOver;
 			}
 		}
-
-		updateTiles();
-		hb.update();
-		hb2.update();
-		bg1.update();
-		bg2.update();
-		animate();
-
-		if (robot.getCenterY() > 500) {
-			state = GameState.GameOver;
+		
+		// Check if need to spawn objects
+		if (timer <= deltaTime) {
+			timer = MIN_SPAWN_SPEED + SPAWN_SPEED_GAP * rand.nextFloat();
+			spawnObjects();
 		}
-*/
+		else {
+			timer -= deltaTime;
+		}
+
 	}
 
 	private boolean inBounds(TouchEvent event, int x, int y, int width,
@@ -176,8 +190,8 @@ public class GameScreen extends Screen {
 		int len = touchEvents.size();
 		for (int i = 0; i < len; i++) {
 			TouchEvent event = touchEvents.get(i);
-			if (event.type == TouchEvent.TOUCH_DOWN) {
-				if (inBounds(event, 0, 0, 480, 800)) {
+			if (event.type == TouchEvent.TOUCH_UP) {
+				if (inBounds(event, 110, 390, 260, 50)) {
 					nullify();
 					game.setScreen(new MainMenuScreen(game));
 					return;
@@ -198,13 +212,18 @@ public class GameScreen extends Screen {
 
 		g.drawImage(Assets.background, 0, 0);
 		
-/* REMOVE
-		ArrayList projectiles = robot.getProjectiles();
-		for (int i = 0; i < projectiles.size(); i++) {
-			Projectile p = (Projectile) projectiles.get(i);
-			g.drawRect(p.getX(), p.getY(), 10, 5, Color.YELLOW);
+		for (int i = 0; i < gameObjects.size(); i++) {
+			GameObject o = gameObjects.get(i);
+			
+			if (o instanceof GoodObject) {
+				g.drawImage(good, o.getX(), o.getY());
+			}
+			else if (o instanceof BadObject) {
+				g.drawImage(bad, o.getX(), o.getY());
+			}
 		}
-*/
+		
+		g.drawString(Integer.toString(score), 240, 50, paint);
 
 		// Secondly, draw the UI above the game elements.
 		if (state == GameState.Ready)
@@ -227,6 +246,7 @@ public class GameScreen extends Screen {
 		paint2 = null;
 		good = null;
 		bad = null;
+		gameObjects = null;
 
 		// Call garbage collector to clean up memory.
 		System.gc();
@@ -259,8 +279,8 @@ public class GameScreen extends Screen {
 	private void drawGameOverUI() {
 		Graphics g = game.getGraphics();
 		g.drawRect(0, 0, 801, 1201, Color.BLACK);
-		g.drawString("GAME OVER.", 240, 400, paint2);
-		g.drawString("Tap to return.", 240, 540, paint);
+		g.drawString("GAME OVER.", 240, 350, paint2);
+		g.drawString("Tap here to return.", 240, 430, paint);
 
 	}
 
@@ -288,8 +308,31 @@ public class GameScreen extends Screen {
 	}
 
 	private void goToMenu() {
-		// TODO Auto-generated method stub
 		game.setScreen(new MainMenuScreen(game));
 
+	}
+	
+	/* Used to spawn game objects during the game
+	 */
+	private void spawnObjects() {
+		
+		// Get the column position to spawn
+		int column = rand.nextInt(NUM_COLUMNS);
+		int posX = 30 + 115 * column;
+		
+		// Get the object's speed
+		int oSpeed = MIN_OBJECT_SPEED + rand.nextInt(OBJECT_SPEED_GAP);
+		
+		// Get the type of object
+		GameObject o;
+		if(rand.nextInt(100) < GOOD_TO_BAD_RATIO ) {
+			o = new GoodObject(posX, 75, 75, oSpeed);
+		} 
+		else {
+
+			o = new BadObject(posX, 75, 75, oSpeed);
+		}
+		
+		gameObjects.add(o);
 	}
 }
