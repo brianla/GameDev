@@ -13,7 +13,7 @@ public class Assets {
     public static Music theme;
     
     public static void load(ActivityGame activityGame) {
-        theme = activityGame.getAudio().createMusic("menutheme.mp3");
+        theme = activityGame.getAudio().createMusic("bgmusic.mp3");
         theme.setLooping(true);
         theme.setVolume(0.85f);
         theme.play();

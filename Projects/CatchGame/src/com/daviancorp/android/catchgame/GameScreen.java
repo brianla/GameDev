@@ -116,7 +116,7 @@ public class GameScreen extends Screen {
 					if (inBounds(event, g.getX(), g.getY(), g.getWidth(), g.getHeight())) {
 
 						if (g instanceof GoodObject) {
-							score += g.getPoints();
+							score += g.getPoints() + ((840 - g.getY()) / 10);
 							gameObjects.remove(j);
 						}
 						else if (g instanceof BadObject) {
@@ -278,7 +278,8 @@ public class GameScreen extends Screen {
 
 	private void drawGameOverUI() {
 		Graphics g = game.getGraphics();
-		g.drawRect(0, 0, 801, 1201, Color.BLACK);
+		g.drawARGB(155, 0, 0, 0);
+		//g.drawRect(0, 0, 801, 1201, Color.BLACK);
 		g.drawString("GAME OVER.", 240, 350, paint2);
 		g.drawString("Tap here to return.", 240, 430, paint);
 

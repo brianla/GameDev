@@ -7,7 +7,7 @@ public class GoodObject extends GameObject {
 		setY(0);
 		setWidth(width);
 		setHeight(height);
-		setPoints(1);
+		setPoints(100);
 		
 		setSpeedY(MIN_SPEED + r);
 	}
