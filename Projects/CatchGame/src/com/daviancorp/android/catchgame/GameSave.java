@@ -18,7 +18,7 @@ public class GameSave extends JSONSerializer {
 		super(c, f);
 	}
 	
-	public void saveHighScore(int score)
+	public void saveCatchGame(int score)
 		throws JSONException, IOException {
 		
 		// Build an array in JSON
@@ -31,4 +31,14 @@ public class GameSave extends JSONSerializer {
 		super.save(array);
 	}
 
+	public int loadCatchGame() {
+		try {
+			JSONArray array = super.load();
+			int highscore = array.getJSONObject(0).getInt(JSON_HIGHSCORE);
+			return highscore;
+		}
+		catch (Exception e) {
+			return 0;
+		}
+	}
 }

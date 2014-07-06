@@ -3,7 +3,7 @@ package com.daviancorp.android.catchgame;
 import android.graphics.Rect;
 
 public class GameObject {
-		protected final static int MIN_SPEED = 10;
+		protected static final int MIN_SPEED = 10;
 
 		private int x, y, width, height, speedY;
 		private int points;

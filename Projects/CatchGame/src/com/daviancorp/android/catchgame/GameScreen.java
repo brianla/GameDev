@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
 
@@ -20,25 +21,29 @@ public class GameScreen extends Screen {
 
 	GameState state = GameState.Ready;
 
-	private final static int NUM_COLUMNS = 4;
-	private final static int SPAWN_SPEED_GAP = 50;
-	private final static int MIN_SPAWN_SPEED = 50;
-	private final static int MAX_SPAWN_SPEED = 100;
-	;
-	private final static int OBJECT_SPEED_GAP = 5;
-	private final static int MIN_OBJECT_SPEED = 5;
+	private static final int NUM_COLUMNS = 4;
+	private static final int SPAWN_SPEED_GAP = 50;
+	private static final int MIN_SPAWN_SPEED = 50;
+	private static final int MAX_SPAWN_SPEED = 100;
+
+	private static final int OBJECT_SPEED_GAP = 5;
+	private static final int MIN_OBJECT_SPEED = 5;
 	
-	private final static int GOOD_TO_BAD_RATIO = 75;
+	private static final int GOOD_TO_BAD_RATIO = 75;
+	
+	private static final String FILENAME = "catchgame.json";
+	
 	// Variable Setup
 	private Image good, bad;
 
 	private ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
-
+	private GameSave gameSave;
+	
 	private Random rand = new Random();
 	private float timer;
-	private int score;
+	private int score, highscore;
 	
-	Paint paint, paint2;
+	private Paint paint, paint2;
 
 	public GameScreen(Game game) {
 		super(game);
@@ -62,6 +67,10 @@ public class GameScreen extends Screen {
 
 		score = 0;
 		timer = MIN_SPAWN_SPEED + SPAWN_SPEED_GAP * rand.nextFloat();
+		
+		gameSave = new GameSave((Context) game, FILENAME);
+		
+		highscore = gameSave.loadCatchGame();
 	}
 
 	@Override
@@ -121,6 +130,7 @@ public class GameScreen extends Screen {
 						}
 						else if (g instanceof BadObject) {
 							state = GameState.GameOver;
+							checkScore();
 						}
 					}		
 				}
@@ -144,6 +154,7 @@ public class GameScreen extends Screen {
 			
 			if ((g instanceof GoodObject) && (g.getY() > 800)) {
 				state = GameState.GameOver;
+				checkScore();
 			}
 		}
 		
@@ -223,7 +234,7 @@ public class GameScreen extends Screen {
 			}
 		}
 		
-		g.drawString(Integer.toString(score), 240, 50, paint);
+		g.drawString("Score: " + Integer.toString(score), 240, 50, paint);
 
 		// Secondly, draw the UI above the game elements.
 		if (state == GameState.Ready)
@@ -280,6 +291,8 @@ public class GameScreen extends Screen {
 		Graphics g = game.getGraphics();
 		g.drawARGB(155, 0, 0, 0);
 		//g.drawRect(0, 0, 801, 1201, Color.BLACK);
+		g.drawString("Score: " + Integer.toString(score), 240, 50, paint);
+		g.drawString("High Score: " + Integer.toString(highscore), 240, 95, paint);
 		g.drawString("GAME OVER.", 240, 350, paint2);
 		g.drawString("Tap here to return.", 240, 430, paint);
 
@@ -335,5 +348,25 @@ public class GameScreen extends Screen {
 		}
 		
 		gameObjects.add(o);
+	}
+	
+	/* Check if score beats high score
+	 */
+	public void checkScore() {
+		if (score > highscore) {
+			highscore = score;
+			saveHighScore();
+		}
+	}
+	
+	/* Save the high score to system
+	 */
+	public boolean saveHighScore() {
+		try {
+			gameSave.saveCatchGame(highscore);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 }
