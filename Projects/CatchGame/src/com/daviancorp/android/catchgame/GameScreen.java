@@ -29,12 +29,14 @@ public class GameScreen extends Screen {
 	private static final int OBJECT_SPEED_GAP = 5;
 	private static final int MIN_OBJECT_SPEED = 5;
 	
-	private static final int GOOD_TO_BAD_RATIO = 75;
+	private static final int GOOD_TO_BAD_RATIO = 80;
+	private static final int GOOD_TO_GREAT_RATIO = 80;
 	
 	private static final String FILENAME = "catchgame.json";
 	
 	// Variable Setup
-	private Image good, bad;
+	private Image good, great, bad;
+	private Image mediaOption;
 
 	private ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
 	private GameSave gameSave;
@@ -42,6 +44,7 @@ public class GameScreen extends Screen {
 	private Random rand = new Random();
 	private float timer;
 	private int score, highscore;
+	private boolean mediaOn;
 	
 	private Paint paint, paint2;
 
@@ -50,6 +53,7 @@ public class GameScreen extends Screen {
 
 		// Initialize game objects here
 		good = Assets.good;
+		great = Assets.great;
 		bad = Assets.bad;
 
 		// Defining a paint object
@@ -70,12 +74,28 @@ public class GameScreen extends Screen {
 		
 		gameSave = new GameSave((Context) game, FILENAME);
 		
-		highscore = gameSave.loadCatchGame();
+		highscore = gameSave.loadHighScore();
+		mediaOn = gameSave.loadMediaOption();
+		getMedia();
 	}
 
 	@Override
 	public void update(float deltaTime) {
 		List<TouchEvent> touchEvents = game.getInput().getTouchEvents();
+		
+		// Check if player pressed mute/unmute button
+		int len = touchEvents.size();
+		for (int i = 0; i < len; i++) {
+			TouchEvent event = touchEvents.get(i);
+			if (event.type == TouchEvent.TOUCH_DOWN) {
+				
+				// Pressed mute/unmute button
+				if (inBounds(event, 415, 0, 65, 65)) {
+					toggleMedia();
+					saveGame();
+				}
+			}
+		}
 
 		// We have four separate update methods in this example.
 		// Depending on the state of the game, we call different update methods.
@@ -128,6 +148,10 @@ public class GameScreen extends Screen {
 							score += g.getPoints() + ((840 - g.getY()) / 10);
 							gameObjects.remove(j);
 						}
+						else if (g instanceof GreatObject) {
+							score += g.getPoints() + 2 * ((840 - g.getY()) / 10);
+							gameObjects.remove(j);
+						}
 						else if (g instanceof BadObject) {
 							state = GameState.GameOver;
 							checkScore();
@@ -152,7 +176,7 @@ public class GameScreen extends Screen {
 			GameObject g = gameObjects.get(j);
 			g.update();
 			
-			if ((g instanceof GoodObject) && (g.getY() > 800)) {
+			if (((g instanceof GoodObject) || (g instanceof GreatObject)) && (g.getY() > 800)) {
 				state = GameState.GameOver;
 				checkScore();
 			}
@@ -229,12 +253,13 @@ public class GameScreen extends Screen {
 			if (o instanceof GoodObject) {
 				g.drawImage(good, o.getX(), o.getY());
 			}
+			else if (o instanceof GreatObject){
+				g.drawImage(great, o.getX(), o.getY());
+			}
 			else if (o instanceof BadObject) {
 				g.drawImage(bad, o.getX(), o.getY());
 			}
 		}
-		
-		g.drawString("Score: " + Integer.toString(score), 240, 50, paint);
 
 		// Secondly, draw the UI above the game elements.
 		if (state == GameState.Ready)
@@ -246,6 +271,8 @@ public class GameScreen extends Screen {
 		if (state == GameState.GameOver)
 			drawGameOverUI();
 
+		g.drawString("Score: " + Integer.toString(score), 240, 50, paint);
+		g.drawImage(mediaOption, 415, 0, 0, 0, 65, 65);
 	}
 
 	private void nullify() {
@@ -256,6 +283,7 @@ public class GameScreen extends Screen {
 		paint = null;
 		paint2 = null;
 		good = null;
+		great = null;
 		bad = null;
 		gameObjects = null;
 
@@ -269,13 +297,11 @@ public class GameScreen extends Screen {
 
 		g.drawARGB(155, 0, 0, 0);
 		g.drawString("Tap to Start.", 240, 400, paint);
-
 	}
 
 	private void drawRunningUI() {
 		Graphics g = game.getGraphics();
 		g.drawImage(Assets.pause, 0, 0, 0, 0, 65, 65);
-
 	}
 
 	private void drawPausedUI() {
@@ -284,18 +310,15 @@ public class GameScreen extends Screen {
 		g.drawARGB(155, 0, 0, 0);
 		g.drawString("Resume", 240, 300, paint2);
 		g.drawString("Menu", 240, 500, paint2);
-
 	}
 
 	private void drawGameOverUI() {
 		Graphics g = game.getGraphics();
 		g.drawARGB(155, 0, 0, 0);
 		//g.drawRect(0, 0, 801, 1201, Color.BLACK);
-		g.drawString("Score: " + Integer.toString(score), 240, 50, paint);
 		g.drawString("High Score: " + Integer.toString(highscore), 240, 95, paint);
 		g.drawString("GAME OVER.", 240, 350, paint2);
 		g.drawString("Tap here to return.", 240, 430, paint);
-
 	}
 
 	@Override
@@ -339,8 +362,13 @@ public class GameScreen extends Screen {
 		
 		// Get the type of object
 		GameObject o;
-		if(rand.nextInt(100) < GOOD_TO_BAD_RATIO ) {
-			o = new GoodObject(posX, 75, 75, oSpeed);
+		if (rand.nextInt(100) < GOOD_TO_BAD_RATIO ) {
+			if (rand.nextInt(100) < GOOD_TO_GREAT_RATIO) {
+				o = new GoodObject(posX, 75, 75, oSpeed);
+			}
+			else {
+				o = new GreatObject(posX, 75, 75, oSpeed);
+			}
 		} 
 		else {
 
@@ -350,20 +378,46 @@ public class GameScreen extends Screen {
 		gameObjects.add(o);
 	}
 	
-	/* Check if score beats high score
+	/* Get the info for muted/unmuted media
 	 */
-	public void checkScore() {
-		if (score > highscore) {
-			highscore = score;
-			saveHighScore();
+	private void getMedia() {
+		if (mediaOn == true) {
+			mediaOption = Assets.mediaPlay;
+			
+			if (!Assets.theme.isPlaying()) {
+				Assets.theme.play();
+			}
+		} 
+		else {
+			mediaOption = Assets.mediaMute;
+			
+			if (Assets.theme.isPlaying()) {
+				Assets.theme.stop();
+			}
 		}
 	}
 	
-	/* Save the high score to system
+	/* Toggle the media option
 	 */
-	public boolean saveHighScore() {
+	private void toggleMedia() {
+		mediaOn = !mediaOn;
+		getMedia();
+	}
+	
+	/* Check if score beats high score
+	 */
+	private void checkScore() {
+		if (score > highscore) {
+			highscore = score;
+			saveGame();
+		}
+	}
+	
+	/* Save game info to system
+	 */
+	private boolean saveGame() {
 		try {
-			gameSave.saveCatchGame(highscore);
+			gameSave.saveCatchGame(highscore, mediaOn);
 			return true;
 		} catch (Exception e) {
 			return false;

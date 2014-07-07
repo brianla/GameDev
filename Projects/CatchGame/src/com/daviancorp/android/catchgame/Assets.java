@@ -7,8 +7,9 @@ import com.daviancorp.framework.Sound;
 public class Assets {
     
     public static Image menu, splash, background;	// Main images
-    public static Image good, bad;			// Game objects
+    public static Image good, great, bad;			// Game objects
     public static Image pause;				// Game buttons
+    public static Image mediaPlay, mediaMute; 		// Media options
     public static Sound coin;
     public static Music theme;
     

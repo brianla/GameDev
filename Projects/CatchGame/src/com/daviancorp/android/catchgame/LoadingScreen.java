@@ -18,9 +18,13 @@ public class LoadingScreen extends Screen {
         Assets.background = g.newImage("background.png", ImageFormat.RGB565);
       
         Assets.good = g.newImage("good.png", ImageFormat.ARGB4444);
+        Assets.great = g.newImage("great.png", ImageFormat.ARGB4444);
         Assets.bad = g.newImage("bad.png", ImageFormat.ARGB4444);
 
         Assets.pause = g.newImage("pause.jpg", ImageFormat.RGB565);
+        
+        Assets.mediaPlay = g.newImage("media_play.png", ImageFormat.RGB565);
+        Assets.mediaMute = g.newImage("media_mute.png", ImageFormat.RGB565);
 
         Assets.coin = game.getAudio().createSound("coin1.wav");
         
