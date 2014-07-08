@@ -3,15 +3,17 @@ package com.daviancorp.android.catchgame;
 import java.util.List;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.daviancorp.framework.Game;
 import com.daviancorp.framework.Graphics;
 import com.daviancorp.framework.Image;
-import com.daviancorp.framework.Screen;
 import com.daviancorp.framework.Input.TouchEvent;
+import com.daviancorp.framework.Screen;
 
 public class MainMenuScreen extends Screen {
 
+	private static final String TAG = "MainMenuScreen";
 	private static final String FILENAME = "catchgame.json";
 	
 	private GameSave gameSave;
@@ -35,19 +37,25 @@ public class MainMenuScreen extends Screen {
 
         int len = touchEvents.size();
         for (int i = 0; i < len; i++) {
-            TouchEvent event = touchEvents.get(i);
-            if (event.type == TouchEvent.TOUCH_UP) {
-            	// Pressed Play button
-                if (inBounds(event, 175, 530, 130, 70)) {
-                    game.setScreen(new GameScreen(game));
-                }
-                
-				// Pressed mute/unmute button
-                else if (inBounds(event, 415, 0, 65, 65)) {
-                	toggleMedia();
-					saveGame();
-				}
-            }
+//        	Log.d(TAG, "len: " + touchEvents.size());
+//        	Log.d(TAG, "i: " + i);
+        	
+        	if(i < touchEvents.size()) {
+        	
+	            TouchEvent event = touchEvents.get(i);
+	            if (event.type == TouchEvent.TOUCH_UP) {
+	            	// Pressed Play button
+	                if (inBounds(event, 175, 530, 130, 70)) {
+	                    game.setScreen(new GameScreen(game));
+	                }
+	                
+					// Pressed mute/unmute button
+	                else if (inBounds(event, 415, 0, 65, 65)) {
+	                	toggleMedia();
+						saveGame();
+					}
+	            }
+        	}
         }
     }
 

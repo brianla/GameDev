@@ -147,10 +147,12 @@ public class GameScreen extends Screen {
 						if (g instanceof GoodObject) {
 							score += g.getPoints() + ((840 - g.getY()) / 10);
 							gameObjects.remove(j);
+							objectSound(g.getX());
 						}
 						else if (g instanceof GreatObject) {
 							score += g.getPoints() + 2 * ((840 - g.getY()) / 10);
 							gameObjects.remove(j);
+							objectSound(g.getX());
 						}
 						else if (g instanceof BadObject) {
 							state = GameState.GameOver;
@@ -376,6 +378,27 @@ public class GameScreen extends Screen {
 		}
 		
 		gameObjects.add(o);
+	}
+	
+	/* Play the sound when a game object is clicked
+	 */
+	private void objectSound(int i) {
+		if (mediaOn) {
+			switch (i) {
+				case (30 + 115 * 0):
+					Assets.item1.play(0.5f);
+					break;
+				case (30 + 115 * 1):
+					Assets.item2.play(0.5f);
+					break;
+				case (30 + 115 * 2):
+					Assets.item3.play(0.5f);
+					break;
+				case (30 + 115 * 3):
+					Assets.item4.play(0.85f);
+					break;		
+			}
+		}
 	}
 	
 	/* Get the info for muted/unmuted media
