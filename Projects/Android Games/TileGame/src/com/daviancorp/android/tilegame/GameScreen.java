@@ -24,15 +24,16 @@ public class GameScreen extends Screen {
 	private static final int NUM_ROWS = 4;
 	private static final int NUM_COLUMNS = 4;
 	
-	private static final int WIDTH_OFFSET = 25;
-	private static final int HEIGHT_OFFSET = 288;
-	private static final int WIDTH_GAP = 6;
-	private static final int HEIGHT_GAP = 6;
+	private static final int WIDTH_OFFSET = 40;
+	private static final int HEIGHT_OFFSET = 420;
+	private static final int WIDTH_GAP = 20;
+	private static final int HEIGHT_GAP = 20;
 	
 	private static final int SPAWN_SPEED_VAR = 20;
 	private static final int MIN_SPAWN_SPEED = 20;
 	private static final float TILE_DURATION = 50;
 	private static final int RED_TO_BLACK = 20;
+	private static final int SPAWN_TWO_CHANCE = 20;
 
 	// Variable Setup
 	private Image black_tile, white_tile, red_tile, yellow_tile;
@@ -92,13 +93,13 @@ public class GameScreen extends Screen {
 		
 		// Defining a paint object
 		paint = new Paint();
-		paint.setTextSize(30);
+		paint.setTextSize(50);
 		paint.setTextAlign(Paint.Align.CENTER);
 		paint.setAntiAlias(true);
 		paint.setColor(Color.WHITE);
 
 		paint2 = new Paint();
-		paint2.setTextSize(70);
+		paint2.setTextSize(110);
 		paint2.setTextAlign(Paint.Align.CENTER);
 		paint2.setAntiAlias(true);
 		paint2.setColor(Color.WHITE);
@@ -132,7 +133,10 @@ public class GameScreen extends Screen {
 			if (event.type == TouchEvent.TOUCH_DOWN) {
 				
 				// Pressed mute/unmute button
-				if (inBounds(event, 415, 0, 65, 65)) {
+				if (inBounds(event, 
+						800-shared.getMediaOption().getWidth(), 0, 
+						shared.getMediaOption().getWidth(), 
+						shared.getMediaOption().getHeight())) {
 					shared.toggleMedia();
 					shared.saveGame();
 				}
@@ -161,6 +165,7 @@ public class GameScreen extends Screen {
 		// state now becomes GameState.Running.
 		// Now the updateRunning() method will be called!
 
+		// TODO - Touching media option will also start
 		if (touchEvents.size() > 0)
 			state = GameState.Running;
 	}
@@ -182,8 +187,7 @@ public class GameScreen extends Screen {
 						if (inBounds(event, 
 								WIDTH_OFFSET + WIDTH_GAP + (width + WIDTH_GAP)*r, 
 								HEIGHT_OFFSET + HEIGHT_GAP + (height + HEIGHT_GAP)*c, 
-								width,
-								height)) {
+								width, height)) {
 							
 							if (tiles[r][c].getType() == Tile.BLACK) {
 								changeTile(r, c, Tile.WHITE);
@@ -199,7 +203,8 @@ public class GameScreen extends Screen {
 				
 
 				// Pressed Pause button
-				if (inBounds(event, 0, 0, 65, 65)) {
+				if (inBounds(event, 0, 0, 
+						Assets.pause.getWidth(), Assets.pause.getHeight())) {
 					state = GameState.Paused;
 				}
 				
@@ -277,7 +282,9 @@ public class GameScreen extends Screen {
 		// Check when to change a tile
 		if (timer <= deltaTime) {
 			timer = MIN_SPAWN_SPEED + SPAWN_SPEED_VAR * rand.nextFloat();
+			
 			newRandomTile();
+//			if(rand.nextInt(100) < SPAWN_TWO_CHANCE) newRandomTile();
 		}
 		else {
 			timer -= deltaTime;
@@ -300,11 +307,14 @@ public class GameScreen extends Screen {
 			
 			if (event.type == TouchEvent.TOUCH_UP) {
 				
-				if (inBounds(event, 50, 210, 380, 90)) {
+				// TODO
+				// 'Resume'
+				if (inBounds(event, 195, 515, 410, 100)) {
 					resume();
 				}
 
-				else if (inBounds(event, 110, 410, 250, 90)) {
+				// 'Menu'
+				else if (inBounds(event, 260, 715, 280, 100)) {
 					nullify();
  					goToMenu();
 				}
@@ -317,16 +327,16 @@ public class GameScreen extends Screen {
 		int len = touchEvents.size();
 		for (int i = 0; i < len; i++) {
 			TouchEvent event = touchEvents.get(i);
-			
+
 			if (event.type == TouchEvent.TOUCH_UP) {
 				// 'Return'
-				if (inBounds(event, 0, 710, 120, 55)) {
+				if (inBounds(event, 20, 1175, 200, 80)) {
 					nullify();
 					game.setScreen(new MainMenuScreen(game));
 					return;
 				}
 				// 'Retry'
-				else if (inBounds(event, 370, 710, 90, 55)) {
+				else if (inBounds(event, 610, 1175, 165, 80)) {
 					newGame();
 					state = GameState.Running;
 				}
@@ -345,7 +355,9 @@ public class GameScreen extends Screen {
 		// g.drawImage(Assets.character, characterX, characterY);
 
 		g.drawImage(Assets.background, 0, 0);
-		g.drawImage(board, 25, 288, 0, 0, board.getWidth(), board.getHeight());
+		
+		g.drawImage(board, WIDTH_OFFSET, HEIGHT_OFFSET, 0, 0, 
+				board.getWidth(), board.getHeight());
 		
 		for(int r = 0; r < NUM_ROWS; r++) {
 			for (int c = 0; c < NUM_COLUMNS; c++) {
@@ -372,10 +384,7 @@ public class GameScreen extends Screen {
 				g.drawImage(tileImage, 
 						WIDTH_OFFSET + WIDTH_GAP + (width + WIDTH_GAP)*r, 
 						HEIGHT_OFFSET + HEIGHT_GAP + (height + HEIGHT_GAP)*c, 
-						0, 
-						0, 
-						width, 
-						height);
+						0, 0, width, height);
 			}
 		}
 
@@ -390,10 +399,14 @@ public class GameScreen extends Screen {
 			drawGameOverUI();
 
 		/* TODO */
-		g.drawString("Score: " + score, 240, 50, paint);
-		g.drawString("High Score: " + shared.getHighscore(), 240, 95, paint);
+		// TODO
+		g.drawString("Score: " + score, 400, 75, paint);
+		g.drawString("High Score: " + shared.getHighscore(), 400, 140, paint);
 //		g.drawString("Num_Black: " + num_black, 240, 150, paint);
-		g.drawImage(shared.getMediaOption(), 415, 0, 0, 0, 65, 65);
+		g.drawImage(shared.getMediaOption(), 
+				800-shared.getMediaOption().getWidth(), 0, 0, 0,
+        		shared.getMediaOption().getWidth(), 
+        		shared.getMediaOption().getHeight());
 	}
 
 	private void nullify() {
@@ -438,33 +451,44 @@ public class GameScreen extends Screen {
 	private void drawReadyUI() {
 		Graphics g = game.getGraphics();
 
+		// TODO
 		g.drawARGB(155, 0, 0, 0);
-		g.drawString("Tap to Start.", 240, 400, paint);
+		g.drawString("Tap to Start.", 400, 700, paint);
 	}
 
 	private void drawRunningUI() {
 		Graphics g = game.getGraphics();
 		
 		/* TODO */
-		g.drawImage(Assets.pause, 0, 0, 0, 0, 65, 65);	
+		g.drawImage(Assets.pause, 0, 0, 0, 0, 
+				Assets.pause.getWidth(), Assets.pause.getHeight());	
 	}
 
 	private void drawPausedUI() {
 		Graphics g = game.getGraphics();
 		
 		// Darken the entire screen so you can display the Paused screen.
+		// TODO
 		g.drawARGB(155, 0, 0, 0);
-		g.drawString("Resume", 240, 300, paint2);
-		g.drawString("Menu", 240, 500, paint2);
+		g.drawString("Resume", 400, 600, paint2);
+		g.drawString("Menu", 400, 800, paint2);
+	
+		// TODO
+//		g.drawRect(195, 515, 410, 100, Color.argb(100, 50, 0, 0));
+//		g.drawRect(260, 715, 280, 100, Color.argb(100, 50, 0, 0));
 	}
 
 	private void drawGameOverUI() {
 		Graphics g = game.getGraphics();
 
+		// TODO
 		g.drawARGB(155, 0, 0, 0);
-		g.drawString("GAME OVER", 240, 250, paint2);
-		g.drawString("Return", 60, 760, paint);
-		g.drawString("Retry", 420, 760, paint);
+		g.drawString("GAME OVER", 400, 350, paint2);
+		g.drawString("Return", 120, 1230, paint);
+		g.drawString("Retry", 690, 1230, paint);
+		
+//		g.drawRect(20, 1175, 200, 80, Color.argb(100, 50, 0, 0));
+//		g.drawRect(610, 1175, 165, 80, Color.argb(100, 50, 0, 0));
 	}
 
 	@Override

@@ -34,7 +34,7 @@ public class AndroidGraphics implements Graphics {
         
         /* TODO: FONT */
 	    tf = Typeface.createFromAsset(assets,
-	                "fonts/JandaManateeSolid.ttf");
+	                "fonts/ClearSans-Medium.ttf");
     }
 
     @Override

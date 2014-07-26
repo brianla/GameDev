@@ -3,6 +3,7 @@ package com.daviancorp.android.tilegame;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 
 import com.daviancorp.framework.Game;
@@ -41,7 +42,7 @@ public class MainMenuScreen extends Screen {
 	            /* TODO */
 	            if (event.type == TouchEvent.TOUCH_UP) {
 	            	// Pressed Play button
-	                if (inBounds(event, 160, 480, 130, 70)) {
+	                if (inBounds(event, 270, 715, 210, 125)) {
 	                    game.setScreen(new GameScreen(game));
 	                }
 	                
@@ -51,7 +52,9 @@ public class MainMenuScreen extends Screen {
 //	                }
 //	                
 					// Pressed mute/unmute button
-	                else if (inBounds(event, 415, 0, 65, 65)) {
+	                else if (inBounds(event, 800-shared.getMediaOption().getWidth(), 0, 
+	                		shared.getMediaOption().getWidth(), 
+	                		shared.getMediaOption().getHeight())) {
 	                	shared.toggleMedia();
 						shared.saveGame();
 					}
@@ -74,7 +77,14 @@ public class MainMenuScreen extends Screen {
         Graphics g = game.getGraphics();
 
         g.drawImage(Assets.menu, 0, 0);
-		g.drawImage(shared.getMediaOption(), 415, 0, 0, 0, 65, 65);
+		g.drawImage(shared.getMediaOption(), 
+				800-shared.getMediaOption().getWidth(), 
+				0, 0, 0, 
+				shared.getMediaOption().getWidth(), 
+				shared.getMediaOption().getWidth());
+		
+		// TODO
+//		g.drawRect(270, 715, 210, 125, Color.argb(100, 50, 0, 0));
     }
 
     @Override
