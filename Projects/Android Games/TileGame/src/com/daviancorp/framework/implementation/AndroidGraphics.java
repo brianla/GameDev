@@ -34,7 +34,7 @@ public class AndroidGraphics implements Graphics {
         
         /* TODO: FONT */
 	    tf = Typeface.createFromAsset(assets,
-	                "fonts/ClearSans-Medium.ttf");
+	                "fonts/Roboto/RobotoCondensed/RobotoCondensed-Bold.ttf");
     }
 
     @Override

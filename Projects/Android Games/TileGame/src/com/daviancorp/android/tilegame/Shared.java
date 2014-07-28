@@ -82,11 +82,13 @@ public final class Shared {
 	
 	/* Check if score beats high score
 	 */
-	public void checkScore(int score) {
+	public boolean checkScore(int score) {
 		if (score > highscore) {
 			highscore = score;
 			saveGame();
+			return true;
 		}
+		else return false;
 	}
 	
 	/* Save game info to system

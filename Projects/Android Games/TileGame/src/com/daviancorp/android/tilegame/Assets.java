@@ -15,7 +15,7 @@ public class Assets {
 	 			black_tile_5, black_tile_6, black_tile_7, black_tile_8, black_tile_9,
 	 			black_tile_10, black_tile_11, black_tile_12, black_tile_13, black_tile_14,
 	 			black_tile_15, black_tile_16, black_tile_17;
-	public static Image board;
+	public static Image board, board_paused;
 
     public static Image pause;				// Game buttons
     public static Image mediaPlay, mediaMute; 		// Media options

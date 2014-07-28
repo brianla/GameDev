@@ -34,26 +34,31 @@ public class GameScreen extends Screen {
 	private static final float TILE_DURATION = 50;
 	private static final int RED_TO_BLACK = 20;
 	private static final int SPAWN_TWO_CHANCE = 20;
+	private static final int ANIM_SPEED = 7;
 
+	private static final int TEXT_COLOR = 0xff6B6564;
+	private static final int ORANGE_COLOR = 0xffff8a00;
+	
 	// Variable Setup
 	private Image black_tile, white_tile, red_tile, yellow_tile;
 	private Image black_tile_1, black_tile_2, black_tile_3, black_tile_4,
 			black_tile_5, black_tile_6, black_tile_7, black_tile_8, black_tile_9,
 			black_tile_10, black_tile_11, black_tile_12, black_tile_13, black_tile_14,
 			black_tile_15, black_tile_16, black_tile_17;
-	private Image board;
+	private Image board, board_paused;
 		
 	private Tile[][] tiles;  
 	private Animation[][] animations;
 	private int num_black;		// TODO: Change?
 	private int width, height;
-	private int score;
+	private int score, highScore;
+	private boolean isHighScore;
 	
 	private Random rand = new Random();
 	private float timer;
 
 	private Shared shared;		// Shared variables/methods
-	private Paint paint, paint2;
+	private Paint paint, paint2, paint3, paint4;
 
 	public GameScreen(Game game) {
 		super(game);
@@ -64,6 +69,7 @@ public class GameScreen extends Screen {
 		red_tile = Assets.red_tile;
 		yellow_tile = Assets.yellow_tile;
 		board = Assets.board;
+		board_paused = Assets.board_paused;
 		
 		black_tile_1 = Assets.black_tile_1;
 		black_tile_2 = Assets.black_tile_2;
@@ -93,23 +99,40 @@ public class GameScreen extends Screen {
 		
 		// Defining a paint object
 		paint = new Paint();
-		paint.setTextSize(50);
+		paint.setTextSize(70);
 		paint.setTextAlign(Paint.Align.CENTER);
 		paint.setAntiAlias(true);
-		paint.setColor(Color.WHITE);
+		paint.setColor(TEXT_COLOR);
 
 		paint2 = new Paint();
-		paint2.setTextSize(110);
+		paint2.setTextSize(150);
 		paint2.setTextAlign(Paint.Align.CENTER);
 		paint2.setAntiAlias(true);
-		paint2.setColor(Color.WHITE);
+		paint2.setColor(TEXT_COLOR);
 
+		paint3 = new Paint();
+		paint3.setTextSize(50);
+		paint3.setTextAlign(Paint.Align.CENTER);
+		paint3.setAntiAlias(true);
+		paint3.setColor(Color.BLACK);
+		
+		paint4 = new Paint();
+		paint4.setTextSize(50);
+		paint4.setTextAlign(Paint.Align.CENTER);
+		paint4.setAntiAlias(true);
+		paint4.setColor(Color.RED);
+		
 		newGame();
 	}
 
 	public void newGame() {
 		score = 0;
+		highScore = shared.getHighscore();
+//		shared.setHighscore(0);
+		isHighScore = false;
 		num_black = 0;
+		
+		paint2.setColor(TEXT_COLOR);
 		
 		for (int r = 0; r < NUM_ROWS; r++) {
 			for (int c = 0; c < NUM_COLUMNS; c++) {
@@ -166,8 +189,13 @@ public class GameScreen extends Screen {
 		// Now the updateRunning() method will be called!
 
 		// TODO - Touching media option will also start
-		if (touchEvents.size() > 0)
-			state = GameState.Running;
+		int len = touchEvents.size();
+		for (int i = 0; i < len; i++) {
+			TouchEvent event = touchEvents.get(i);
+			if (event.type == TouchEvent.TOUCH_UP) {
+				state = GameState.Running;
+			}
+		}
 	}
 
 	private void updateRunning(List<TouchEvent> touchEvents, float deltaTime) {
@@ -191,11 +219,15 @@ public class GameScreen extends Screen {
 							
 							if (tiles[r][c].getType() == Tile.BLACK) {
 								changeTile(r, c, Tile.WHITE);
+								score++;
 							}
 							else if (tiles[r][c].getType() == Tile.RED) {
 								changeTile(r, c, Tile.YELLOW);
+
+								paint2.setColor(Color.RED);
 								state = GameState.GameOver;
-								shared.checkScore(score);
+								
+								if(isHighScore) shared.checkScore(score);
 							}
 						}
 					}
@@ -252,8 +284,9 @@ public class GameScreen extends Screen {
 				if (tile.getDuration() < 0) {
 					if (tile.getType() == Tile.BLACK) {
 						changeTile(r, c, Tile.YELLOW);
+						paint2.setColor(Color.RED);
 						state = GameState.GameOver;
-						shared.checkScore(score);
+						if(isHighScore) shared.checkScore(score);
 					}
 					else if (tile.getType() == Tile.RED) {
 						changeTile(r, c, Tile.WHITE);
@@ -278,6 +311,11 @@ public class GameScreen extends Screen {
 //				checkScore();
 //			}
 //		}		
+		
+		if(score > highScore) {
+			isHighScore = true;
+			highScore = score;
+		}
 		
 		// Check when to change a tile
 		if (timer <= deltaTime) {
@@ -309,12 +347,18 @@ public class GameScreen extends Screen {
 				
 				// TODO
 				// 'Resume'
-				if (inBounds(event, 195, 515, 410, 100)) {
+				if (inBounds(event, 150, 475, 500, 200)) {
 					resume();
 				}
-
+				
+				// 'Restart'
+				else if (inBounds(event, 150, 675, 500, 200)) {
+ 					newGame();
+ 					state = GameState.Ready;
+				}
+				
 				// 'Menu'
-				else if (inBounds(event, 260, 715, 280, 100)) {
+				else if (inBounds(event, 150, 875, 500, 200)) {
 					nullify();
  					goToMenu();
 				}
@@ -399,9 +443,18 @@ public class GameScreen extends Screen {
 			drawGameOverUI();
 
 		/* TODO */
-		// TODO
+
+		if(isHighScore) {
+			paint.setColor(ORANGE_COLOR);
+		}
+		
 		g.drawString("Score: " + score, 400, 75, paint);
-		g.drawString("High Score: " + shared.getHighscore(), 400, 140, paint);
+		g.drawString("High Score: " + highScore, 400, 140, paint);
+		
+		if(isHighScore) {
+			paint.setColor(TEXT_COLOR);
+		}
+		
 //		g.drawString("Num_Black: " + num_black, 240, 150, paint);
 		g.drawImage(shared.getMediaOption(), 
 				800-shared.getMediaOption().getWidth(), 0, 0, 0,
@@ -416,6 +469,8 @@ public class GameScreen extends Screen {
 
 		paint = null;
 		paint2 = null;
+		paint3 = null;
+		paint4 = null;
 		
 		black_tile = null;
 		white_tile = null; 
@@ -441,6 +496,7 @@ public class GameScreen extends Screen {
 		black_tile_17 = null;
 		
 		board = null;
+		board_paused = null;
 		tiles = null;
 		animations = null;
 
@@ -452,8 +508,11 @@ public class GameScreen extends Screen {
 		Graphics g = game.getGraphics();
 
 		// TODO
-		g.drawARGB(155, 0, 0, 0);
-		g.drawString("Tap to Start.", 400, 700, paint);
+//		g.drawARGB(155, 0, 0, 0);
+		g.drawString("Tap the black tiles before their ", 400, 250, paint3);
+		g.drawString("time runs out", 400, 300, paint3);
+		g.drawString("Avoid the red tiles!", 400, 370, paint4);
+		g.drawString("Tap anywhere to start", 400, 1230, paint);
 	}
 
 	private void drawRunningUI() {
@@ -469,22 +528,26 @@ public class GameScreen extends Screen {
 		
 		// Darken the entire screen so you can display the Paused screen.
 		// TODO
-		g.drawARGB(155, 0, 0, 0);
-		g.drawString("Resume", 400, 600, paint2);
-		g.drawString("Menu", 400, 800, paint2);
+//		g.drawARGB(155, 0, 0, 0);
+		g.drawImage(board_paused, WIDTH_OFFSET, HEIGHT_OFFSET, 0, 0, 
+				board_paused.getWidth(), board_paused.getHeight());
+		g.drawString("Resume", 400, 625, paint2);
+		g.drawString("Restart", 400, 825, paint2);
+		g.drawString("Home", 400, 1025, paint2);
 	
 		// TODO
-//		g.drawRect(195, 515, 410, 100, Color.argb(100, 50, 0, 0));
-//		g.drawRect(260, 715, 280, 100, Color.argb(100, 50, 0, 0));
+//		g.drawRect(150, 450, 500, 200, Color.argb(100, 50, 0, 0));
+//		g.drawRect(150, 650, 500, 200, Color.argb(100, 50, 0, 0));
+//		g.drawRect(150, 850, 500, 200, Color.argb(100, 50, 0, 0));
 	}
 
 	private void drawGameOverUI() {
 		Graphics g = game.getGraphics();
 
 		// TODO
-		g.drawARGB(155, 0, 0, 0);
-		g.drawString("GAME OVER", 400, 350, paint2);
-		g.drawString("Return", 120, 1230, paint);
+//		g.drawARGB(155, 0, 0, 0);
+		g.drawString("GAME OVER!", 400, 350, paint2);
+		g.drawString("Home", 120, 1230, paint);
 		g.drawString("Retry", 690, 1230, paint);
 		
 //		g.drawRect(20, 1175, 200, 80, Color.argb(100, 50, 0, 0));
@@ -520,24 +583,24 @@ public class GameScreen extends Screen {
 	
 	private Animation newAnimation() {
 		Animation anim_tile = new Animation();
-		anim_tile.addFrame(black_tile_1, 5);
-		anim_tile.addFrame(black_tile_2, 5);
-		anim_tile.addFrame(black_tile_3, 5);
-		anim_tile.addFrame(black_tile_4, 5);
-		anim_tile.addFrame(black_tile_5, 5);
-		anim_tile.addFrame(black_tile_6, 5);
-		anim_tile.addFrame(black_tile_7, 5);
-		anim_tile.addFrame(black_tile_8, 5);
-		anim_tile.addFrame(black_tile_9, 5);
-		anim_tile.addFrame(black_tile_10, 5);
-		anim_tile.addFrame(black_tile_11, 5);
-		anim_tile.addFrame(black_tile_12, 5);
-		anim_tile.addFrame(black_tile_13, 5);
-		anim_tile.addFrame(black_tile_14, 5);
-		anim_tile.addFrame(black_tile_15, 5);
-		anim_tile.addFrame(black_tile_16, 5);
-		anim_tile.addFrame(black_tile_17, 5);
-		anim_tile.addFrame(black_tile, 20);
+		anim_tile.addFrame(black_tile_1, ANIM_SPEED);
+		anim_tile.addFrame(black_tile_2, ANIM_SPEED);
+		anim_tile.addFrame(black_tile_3, ANIM_SPEED);
+		anim_tile.addFrame(black_tile_4, ANIM_SPEED);
+		anim_tile.addFrame(black_tile_5, ANIM_SPEED);
+		anim_tile.addFrame(black_tile_6, ANIM_SPEED);
+		anim_tile.addFrame(black_tile_7, ANIM_SPEED);
+		anim_tile.addFrame(black_tile_8, ANIM_SPEED);
+		anim_tile.addFrame(black_tile_9, ANIM_SPEED);
+		anim_tile.addFrame(black_tile_10, ANIM_SPEED);
+		anim_tile.addFrame(black_tile_11, ANIM_SPEED);
+		anim_tile.addFrame(black_tile_12, ANIM_SPEED);
+		anim_tile.addFrame(black_tile_13, ANIM_SPEED);
+		anim_tile.addFrame(black_tile_14, ANIM_SPEED);
+		anim_tile.addFrame(black_tile_15, ANIM_SPEED);
+		anim_tile.addFrame(black_tile_16, ANIM_SPEED);
+		anim_tile.addFrame(black_tile_17, ANIM_SPEED);
+		anim_tile.addFrame(black_tile, ANIM_SPEED*4);
 		
 		return anim_tile;
 	}
@@ -573,7 +636,6 @@ public class GameScreen extends Screen {
 			if(tile.getType() == Tile.BLACK) {
 				tile.setDuration(-999);
 				animations[row][column] = null;
-				score++;
 				num_black--;
 			}
 			if (type == Tile.BLACK) {
