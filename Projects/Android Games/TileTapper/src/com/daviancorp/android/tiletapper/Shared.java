@@ -9,11 +9,12 @@ public final class Shared {
 	public static final int EASY = 1;
 	public static final int MEDIUM = 2;
 	public static final int HARD = 3;
+	public static final int INSANE = 4;
 	
 	private static Shared instance = null;
 	
 	private GameSave gameSave;
-	private int easyHS, mediumHS, hardHS;
+	private int easyHS, mediumHS, hardHS, insaneHS;
 	private int mode;
 	private boolean musicOn, soundOn;
 	
@@ -58,6 +59,14 @@ public final class Shared {
 
 	public void setHardHS(int hardHS) {
 		this.hardHS = hardHS;
+	}
+	
+	public int getInsaneHS() {
+		return insaneHS;
+	}
+
+	public void setInsaneHS(int insaneHS) {
+		this.insaneHS = insaneHS;
 	}
 	
 	public int getMode() {
@@ -110,6 +119,9 @@ public final class Shared {
 				mode = HARD;
 				break;
 			case HARD:
+				mode = INSANE;
+				break;
+			case INSANE:
 				mode = EASY;
 				break;
 		}
@@ -154,15 +166,20 @@ public final class Shared {
 				saveGame();
 			}
 			break;
+		case INSANE:
+			if (score > insaneHS) {
+				insaneHS = score;
+				saveGame();
+			}
+			break;
 		}
-
 	}
 	
 	/* Save game info to system
 	 */
 	public boolean saveGame() {
 		try {
-			gameSave.saveGame(easyHS, mediumHS, hardHS, mode, musicOn, soundOn);
+			gameSave.saveGame(easyHS, mediumHS, hardHS, insaneHS, mode, musicOn, soundOn);
 			return true;
 		} catch (Exception e) {
 			return false;

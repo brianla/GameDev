@@ -11,7 +11,7 @@ public class Assets {
 	public static final String FILENAME = "tilegame.json";
 	
     public static Image splash, background;	// Main images
-	public static Image black_tile, white_tile, red_tile, yellow_tile;		// Game objects
+	public static Image black_tile, white_tile, red_tile, yellow_tile, orange_tile;		// Game objects
 	public static Image black_tile_1, black_tile_2, black_tile_3, black_tile_4,
 	 			black_tile_5, black_tile_6, black_tile_7, black_tile_8, black_tile_9,
 	 			black_tile_10, black_tile_11, black_tile_12, black_tile_13, black_tile_14,

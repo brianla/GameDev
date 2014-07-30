@@ -41,6 +41,7 @@ public class MainMenuScreen extends Screen {
 		shared.setEasyHS(shared.getGameSave().loadEasyHighScore());
 		shared.setMediumHS(shared.getGameSave().loadMediumHighScore());
 		shared.setHardHS(shared.getGameSave().loadHardHighScore());
+		shared.setInsaneHS(shared.getGameSave().loadInsaneHighScore());
 		shared.setMode(shared.getGameSave().loadMode());
 		shared.setMusicOn(shared.getGameSave().loadMusicOption());
 		shared.setSoundOn(shared.getGameSave().loadSoundOption());
@@ -225,6 +226,9 @@ public class MainMenuScreen extends Screen {
 				break;
 			case Shared.HARD:
 				g.drawString("Hard", 550, 700, paint);
+				break;
+			case Shared.INSANE:
+				g.drawString("Insane", 550, 700, paint);
 				break;
 		}
 		

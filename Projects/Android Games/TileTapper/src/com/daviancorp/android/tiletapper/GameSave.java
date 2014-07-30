@@ -15,6 +15,7 @@ public class GameSave extends JSONSerializer {
 	private static final String JSON_HIGHSCORE_EASY = "easy_highscore";
 	private static final String JSON_HIGHSCORE_MEDIUM = "medium_highscore";
 	private static final String JSON_HIGHSCORE_HARD = "hard_highscore";
+	private static final String JSON_HIGHSCORE_INSANE = "insane_highscore";
 	private static final String JSON_MODE = "mode";
 	private static final String JSON_MUSIC_OPTION = "music_option";
 	private static final String JSON_SOUND_OPTION = "sound_option";
@@ -23,7 +24,7 @@ public class GameSave extends JSONSerializer {
 		super(c, f);
 	}
 	
-	public void saveGame(int easyHS, int mediumHS, int hardHS, int mode, 
+	public void saveGame(int easyHS, int mediumHS, int hardHS, int insaneHS, int mode, 
 			boolean music, boolean sound)
 		throws JSONException, IOException {
 		
@@ -33,6 +34,7 @@ public class GameSave extends JSONSerializer {
 		json.put(JSON_HIGHSCORE_EASY, easyHS);
 		json.put(JSON_HIGHSCORE_MEDIUM, mediumHS);
 		json.put(JSON_HIGHSCORE_HARD, hardHS);
+		json.put(JSON_HIGHSCORE_INSANE, insaneHS);
 		json.put(JSON_MODE, mode);
 		json.put(JSON_MUSIC_OPTION, music);
 		json.put(JSON_SOUND_OPTION, sound);
@@ -70,6 +72,17 @@ public class GameSave extends JSONSerializer {
 			JSONArray array = super.load();
 			int hardHS = array.getJSONObject(0).getInt(JSON_HIGHSCORE_HARD);
 			return hardHS;
+		}
+		catch (Exception e) {
+			return 0;
+		}
+	}
+
+	public int loadInsaneHighScore() {
+		try {
+			JSONArray array = super.load();
+			int insaneHS = array.getJSONObject(0).getInt(JSON_HIGHSCORE_INSANE);
+			return insaneHS;
 		}
 		catch (Exception e) {
 			return 0;

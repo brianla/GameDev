@@ -9,8 +9,8 @@ public class Animation {
 
     private ArrayList frames;
     private int currentFrame;
-    private long animTime;
-    private long totalDuration;
+    private float animTime;
+    private float totalDuration;
 
     public Animation() {
         frames = new ArrayList();
@@ -22,12 +22,12 @@ public class Animation {
         }
     }
 
-    public synchronized void addFrame(Image image, long duration) {
+    public synchronized void addFrame(Image image, float duration) {
         totalDuration += duration;
         frames.add(new AnimFrame(image, totalDuration));
     }
 
-    public synchronized void update(long elapsedTime) {
+    public synchronized void update(float elapsedTime) {
         if (frames.size() > 1) {
             animTime += elapsedTime;
             if (animTime >= totalDuration) {
@@ -58,9 +58,9 @@ public class Animation {
     private class AnimFrame {
 
         Image image;
-        long endTime;
+        float endTime;
 
-        public AnimFrame(Image image, long endTime) {
+        public AnimFrame(Image image, float endTime) {
             this.image = image;
             this.endTime = endTime;
         }

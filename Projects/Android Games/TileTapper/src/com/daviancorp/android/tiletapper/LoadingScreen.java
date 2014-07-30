@@ -23,6 +23,7 @@ public class LoadingScreen extends Screen {
         Assets.white_tile = g.newImage("white_tile.png", ImageFormat.ARGB4444);
         Assets.red_tile = g.newImage("red_tile.png", ImageFormat.ARGB4444);
         Assets.yellow_tile = g.newImage("yellow_tile.png", ImageFormat.ARGB4444);
+        Assets.orange_tile = g.newImage("orange_tile.png", ImageFormat.ARGB4444);
         
         Assets.black_tile_1 = g.newImage("animations/black_tile_1.png", ImageFormat.ARGB4444);
         Assets.black_tile_2 = g.newImage("animations/black_tile_2.png", ImageFormat.ARGB4444);

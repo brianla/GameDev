@@ -40,20 +40,25 @@ public class GameScreen extends Screen {
 //	private static final float TILE_DURATION_MEDIUM  = 45;
 //	private static final int ANIM_SPEED_MEDIUM = 45;
 	
-	private static final int SPEED_VAR_EASY = 20;
-	private static final int SPEED_MIN_EASY = 20;
-	private static final float TILE_DURATION_EASY = 45;
-	private static final int ANIM_SPEED_EASY = 45;
+	private static final int SPEED_VAR_EASY = 35;
+	private static final int SPEED_MIN_EASY = 35;
+	private static final float TILE_DURATION_EASY = 60;
+	private static final int ANIM_SPEED_EASY = 30;
 	
-	private static final int SPEED_VAR_MEDIUM = 15;
-	private static final int SPEED_MIN_MEDIUM = 15;
-	private static final float TILE_DURATION_MEDIUM  = 40;
-	private static final int ANIM_SPEED_MEDIUM = 50;
+	private static final int SPEED_VAR_MEDIUM = 25;
+	private static final int SPEED_MIN_MEDIUM = 25;
+	private static final float TILE_DURATION_MEDIUM  = 50;
+	private static final int ANIM_SPEED_MEDIUM = 40;
 
-	private static final int SPEED_VAR_HARD = 10;
-	private static final int SPEED_MIN_HARD = 10;
-	private static final float TILE_DURATION_HARD = 35;
-	private static final int ANIM_SPEED_HARD = 55;
+	private static final int SPEED_VAR_HARD = 15;
+	private static final int SPEED_MIN_HARD = 15;
+	private static final float TILE_DURATION_HARD = 45;
+	private static final int ANIM_SPEED_HARD = 45;
+	
+	private static final int SPEED_VAR_INSANE = 15;
+	private static final int SPEED_MIN_INSANE = 15;
+	private static final float TILE_DURATION_INSANE = 40;
+	private static final int ANIM_SPEED_INSANE = 50;
 	/* */
 	
 	private static final int RED_TO_BLACK = 20;
@@ -64,7 +69,7 @@ public class GameScreen extends Screen {
 	private static final int ORANGE_COLOR = 0xffff8a00;
 	
 	// Variable Setup
-	private Image black_tile, white_tile, red_tile, yellow_tile;
+	private Image black_tile, white_tile, red_tile, yellow_tile, orange_tile;
 	private Image black_tile_1, black_tile_2, black_tile_3, black_tile_4,
 			black_tile_5, black_tile_6, black_tile_7, black_tile_8, black_tile_9,
 			black_tile_10, black_tile_11, black_tile_12, black_tile_13, black_tile_14,
@@ -94,6 +99,7 @@ public class GameScreen extends Screen {
 		white_tile = Assets.white_tile;
 		red_tile = Assets.red_tile;
 		yellow_tile = Assets.yellow_tile;
+		orange_tile = Assets.orange_tile;
 		board = Assets.board;
 		board_paused = Assets.board_paused;
 		
@@ -178,6 +184,14 @@ public class GameScreen extends Screen {
 			speed_var = SPEED_VAR_HARD;
 			tile_duration = TILE_DURATION_HARD;
 			anim_speed = ANIM_SPEED_HARD;
+			break;
+		case Shared.INSANE:
+			highScore = shared.getInsaneHS();
+			
+			speed_min = SPEED_MIN_INSANE;
+			speed_var = SPEED_VAR_INSANE;
+			tile_duration = TILE_DURATION_INSANE;
+			anim_speed = ANIM_SPEED_INSANE;
 			break;
 		}
 
@@ -271,7 +285,7 @@ public class GameScreen extends Screen {
 								width, height)) {
 							
 							if (tiles[r][c].getType() == Tile.BLACK) {
-								changeTile(r, c, Tile.WHITE);
+								changeTile(r, c, Tile.ORANGE);
 								score++;
 								
 								if (shared.isSoundOn()) {
@@ -300,30 +314,6 @@ public class GameScreen extends Screen {
 						Assets.pause.getWidth(), Assets.pause.getHeight())) {
 					state = GameState.Paused;
 				}
-				
-				/* TODO */	
-//				// Pressed a game object
-//				for (int j = gameObjects.size()-1; j >= 0; j--) {
-//					GameObject g = gameObjects.get(j);
-//					
-//					if (inBounds(event, g.getX(), g.getY(), g.getWidth(), g.getHeight())) {
-//
-//						if (g instanceof GoodObject) {
-//							score += g.getPoints() + ((840 - g.getY()) / 10);
-//							gameObjects.remove(j);
-//							objectSound(g.getX());
-//						}
-//						else if (g instanceof GreatObject) {
-//							score += g.getPoints() + 2 * ((840 - g.getY()) / 10);
-//							gameObjects.remove(j);
-//							objectSound(g.getX());
-//						}
-//						else if (g instanceof BadObject) {
-//							state = GameState.GameOver;
-//							checkScore();
-//						}
-//					}		
-//				}
 			}
 
 			if (event.type == TouchEvent.TOUCH_UP) {
@@ -354,14 +344,16 @@ public class GameScreen extends Screen {
 						
 						if(isHighScore) shared.checkScore(score);
 					}
-					else if (tile.getType() == Tile.RED) {
+					else if ((tile.getType() == Tile.RED) || (tile.getType() == Tile.ORANGE)) {
 						changeTile(r, c, Tile.WHITE);
 					}
 				}
 				else {
 					float prevDuration = tile.getDuration();
 					tile.setDuration(prevDuration - deltaTime);
-					animations[r][c].update((long) (prevDuration - tile.getDuration()) * anim_speed);
+					
+					if (tile.getType() == Tile.BLACK)
+						animations[r][c].update((prevDuration - tile.getDuration()) * anim_speed);
 				}
 			}
 		}
@@ -485,6 +477,9 @@ public class GameScreen extends Screen {
 						break;
 					case Tile.YELLOW:
 						tileImage = yellow_tile;
+						break;
+					case Tile.ORANGE:
+						tileImage = orange_tile;
 						break;
 					default:
 						tileImage = white_tile;
@@ -700,38 +695,22 @@ public class GameScreen extends Screen {
 		if(tile.getType() != type) {
 			
 			if(tile.getType() == Tile.BLACK) {
+				
 				tile.setDuration(-999);
+
 				animations[row][column] = null;
 				num_black--;
 			}
+			
 			if (type == Tile.BLACK) {
 				num_black++;
+			}
+			else if (type == Tile.ORANGE) {
+				tile.setDuration(50 - anim_speed);
 			}
 			
 			tile.setType(type);
 		}
 	}
-	
-	/* TODO */
-//	/* Play the sound when a game object is clicked
-//	 */
-//	private void objectSound(int i) {
-//		if (mediaOn) {
-//			switch (i) {
-//				case (30 + 115 * 0):
-//					Assets.item1.play(0.5f);
-//					break;
-//				case (30 + 115 * 1):
-//					Assets.item2.play(0.5f);
-//					break;
-//				case (30 + 115 * 2):
-//					Assets.item3.play(0.5f);
-//					break;
-//				case (30 + 115 * 3):
-//					Assets.item4.play(0.85f);
-//					break;		
-//			}
-//		}
-//	}
 
 }

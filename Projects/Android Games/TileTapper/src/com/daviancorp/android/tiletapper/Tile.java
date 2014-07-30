@@ -5,6 +5,7 @@ public class Tile {
 	public static final int BLACK = 1;
 	public static final int RED = 2;
 	public static final int YELLOW = 3;
+	public static final int ORANGE = 4;
 	
 	private int type;
 	private float duration;
