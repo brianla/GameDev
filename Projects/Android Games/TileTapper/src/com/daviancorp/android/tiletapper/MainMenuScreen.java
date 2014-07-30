@@ -16,7 +16,7 @@ import com.daviancorp.framework.Screen;
 
 public class MainMenuScreen extends Screen {
 	enum HomeState {
-		Home, Option
+		Home, Option, Highscore
 	}
 
 	HomeState state = HomeState.Home;
@@ -38,11 +38,14 @@ public class MainMenuScreen extends Screen {
 		shared = Shared.getInstance();
 
 		shared.setGameSave(new GameSave((Context) game, Assets.FILENAME));
-		shared.setHighscore(shared.getGameSave().loadHighScore());
+		shared.setEasyHS(shared.getGameSave().loadEasyHighScore());
+		shared.setMediumHS(shared.getGameSave().loadMediumHighScore());
+		shared.setHardHS(shared.getGameSave().loadHardHighScore());
+		shared.setMode(shared.getGameSave().loadMode());
 		shared.setMusicOn(shared.getGameSave().loadMusicOption());
 		shared.setSoundOn(shared.getGameSave().loadSoundOption());
 		shared.getMusic();
-
+		
 		paint = new Paint();
 		paint.setTextAlign(Paint.Align.CENTER);
 		paint.setAntiAlias(true);
@@ -57,6 +60,8 @@ public class MainMenuScreen extends Screen {
 			updateHome(touchEvents, deltaTime);
 		if (state == HomeState.Option)
 			updateOption(touchEvents, deltaTime);
+		if (state == HomeState.Highscore)
+			updateHighscore(touchEvents, deltaTime);
 	}
 
 	public void updateHome(List<TouchEvent> touchEvents, float deltaTime) {
@@ -76,6 +81,12 @@ public class MainMenuScreen extends Screen {
 						// Pressed Options button
 						else if (inBounds(event, 200, 850, 400, 150)) {
 							state = HomeState.Option;
+							switchUpdate = false;
+						}
+						
+						// Pressed High Scores button
+						else if (inBounds(event, 150, 1000, 500, 150)) {
+							state = HomeState.Highscore;
 							switchUpdate = false;
 						}
 					}
@@ -98,21 +109,51 @@ public class MainMenuScreen extends Screen {
 				if (switchUpdate) {
 					/* TODO */
 					if (event.type == TouchEvent.TOUCH_UP) {
-						// Toggle Music
+						
+						// Toggle Mode
 						if (inBounds(event, 50, 600, 700, 150)) {
+							shared.toggleMode();
+						}
+						
+						// Toggle Music
+						if (inBounds(event, 50, 750, 700, 150)) {
 							shared.toggleMusic();
 						}
 	
 						// Toggle Sound
-						else if (inBounds(event, 50, 750, 700, 150)) {
+						else if (inBounds(event, 50, 900, 700, 150)) {
 							shared.toggleSound();
 						}
 						
 						// Pressed Back button
-						else if (inBounds(event, 250, 900, 300, 150)) {
+						else if (inBounds(event, 250, 1050, 300, 150)) {
 							state = HomeState.Home;
 							switchUpdate = false;
 						}
+					}
+				}
+				else {
+					if (event.type == TouchEvent.TOUCH_DOWN) {
+						switchUpdate = true;
+					}
+				}
+			}
+		}
+	}
+	
+
+	public void updateHighscore(List<TouchEvent> touchEvents, float deltaTime) {
+		int len = touchEvents.size();
+		for (int i = 0; i < len; i++) {
+			if (i < touchEvents.size()) {
+				TouchEvent event = touchEvents.get(i);
+
+				if (switchUpdate) {
+					
+					// Pressed Back button
+					if (inBounds(event, 250, 1050, 300, 150)) {
+						state = HomeState.Home;
+						switchUpdate = false;
 					}
 				}
 				else {
@@ -148,6 +189,8 @@ public class MainMenuScreen extends Screen {
 			drawHomeUI();
 		if (state == HomeState.Option)
 			drawOptionUI();
+		if (state == HomeState.Highscore)
+			drawHighscoreUI();
 	}
 
 	private void drawHomeUI() {
@@ -157,40 +200,40 @@ public class MainMenuScreen extends Screen {
 		
 		g.drawString("Play", 400, 800, paint);
 		g.drawString("Options", 400, 950, paint);
+		g.drawString("High Scores", 400, 1100, paint);
 
 		// TODO
 //		 g.drawRect(250, 700, 300, 150, Color.argb(100, 50, 0, 0));
 //		 g.drawRect(200, 850, 400, 150, Color.argb(100, 0, 50, 0));
+//		 g.drawRect(150, 1000, 500, 150, Color.argb(100, 0, 0, 50));
 	}
 
 	private void drawOptionUI() {
 		Graphics g = game.getGraphics();
 		paint.setTextSize(100);
 		paint.setColor(TEXT_COLOR);
-
+		
+		// Drawing Game Mode option
+		g.drawString("Mode:", 200, 700, paint);
+		paint.setColor(ORANGE_COLOR);
+		switch(shared.getMode()) {
+			case Shared.EASY:
+				g.drawString("Easy", 550, 700, paint);
+				break;
+			case Shared.MEDIUM:
+				g.drawString("Medium", 550, 700, paint);
+				break;
+			case Shared.HARD:
+				g.drawString("Hard", 550, 700, paint);
+				break;
+		}
+		
 		// Drawing Music option
-		g.drawString("Music:", 200, 700, paint);
+		paint.setColor(TEXT_COLOR);
+		g.drawString("Music:", 200, 850, paint);
 
 		paint.setColor(ORANGE_COLOR);
 		if(shared.isMusicOn()) {
-			g.drawString("On", 450, 700, paint);
-
-			paint.setColor(TEXT_COLOR);
-			g.drawString("Off", 650, 700, paint);
-		}
-		else {
-			g.drawString("Off", 650, 700, paint);
-			
-			paint.setColor(TEXT_COLOR);
-			g.drawString("On", 450, 700, paint);
-		}
-		g.drawString("/", 550, 700, paint);
-		
-		// Drawing Sound option
-		g.drawString("Sound:", 200, 850, paint);
-		
-		paint.setColor(ORANGE_COLOR);
-		if(shared.isSoundOn()) {
 			g.drawString("On", 450, 850, paint);
 
 			paint.setColor(TEXT_COLOR);
@@ -204,14 +247,47 @@ public class MainMenuScreen extends Screen {
 		}
 		g.drawString("/", 550, 850, paint);
 		
+		// Drawing Sound option
+		g.drawString("Sound:", 200, 1000, paint);
+		
+		paint.setColor(ORANGE_COLOR);
+		if(shared.isSoundOn()) {
+			g.drawString("On", 450, 1000, paint);
+
+			paint.setColor(TEXT_COLOR);
+			g.drawString("Off", 650, 1000, paint);
+		}
+		else {
+			g.drawString("Off", 650, 1000, paint);
+			
+			paint.setColor(TEXT_COLOR);
+			g.drawString("On", 450, 1000, paint);
+		}
+		g.drawString("/", 550, 1000, paint);
+		
 		// Drawing Back option
-		paint.setTextSize(100);
-		g.drawString("Back", 400, 1000, paint);
+		g.drawString("Back", 400, 1150, paint);
 
 		// TODO
 //		 g.drawRect(50, 600, 700, 150, Color.argb(100, 50, 0, 0));
 //		 g.drawRect(50, 750, 700, 150, Color.argb(100, 0, 50, 0));
 //		 g.drawRect(250, 900, 300, 150, Color.argb(100, 0, 00, 50));
+	}
+	
+	private void drawHighscoreUI() {
+		Graphics g = game.getGraphics();
+		paint.setTextSize(100);
+		paint.setColor(TEXT_COLOR);
+		
+		g.drawString("Easy:", 200, 700, paint);
+		g.drawString("Medium:", 200, 850, paint);
+		g.drawString("Hard:", 200, 1000, paint);
+		g.drawString("Back", 400, 1150, paint);
+		
+		paint.setColor(ORANGE_COLOR);
+		g.drawString("" + shared.getEasyHS(), 550, 700, paint);
+		g.drawString("" + shared.getMediumHS(), 550, 850, paint);
+		g.drawString("" + shared.getHardHS(), 550, 1000, paint);
 	}
 
 	@Override
@@ -220,7 +296,6 @@ public class MainMenuScreen extends Screen {
 
 	@Override
 	public void resume() {
-
 	}
 
 	@Override

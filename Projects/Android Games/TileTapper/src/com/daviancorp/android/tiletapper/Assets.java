@@ -27,7 +27,6 @@ public class Assets {
         theme = activityGame.getAudio().createMusic("bgmusic.mp3");
         theme.setLooping(true);
         theme.setVolume(0.5f);
-        theme.play();
     }
 
 }

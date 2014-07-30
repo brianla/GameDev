@@ -28,13 +28,37 @@ public class GameScreen extends Screen {
 	private static final int HEIGHT_OFFSET = 420;
 	private static final int WIDTH_GAP = 20;
 	private static final int HEIGHT_GAP = 20;
+
+	/* Difficulty Speed */
+//	private static final int SPEED_VAR_EASY = 25;
+//	private static final int SPEED_MIN_EASY = 25;
+//	private static final float TILE_DURATION_EASY = 50;
+//	private static final int ANIM_SPEED_EASY = 40;
+//	
+//	private static final int SPEED_VAR_MEDIUM = 20;
+//	private static final int SPEED_MIN_MEDIUM = 20;
+//	private static final float TILE_DURATION_MEDIUM  = 45;
+//	private static final int ANIM_SPEED_MEDIUM = 45;
 	
-	private static final int SPAWN_SPEED_VAR = 20;
-	private static final int MIN_SPAWN_SPEED = 20;
-	private static final float TILE_DURATION = 50;
+	private static final int SPEED_VAR_EASY = 20;
+	private static final int SPEED_MIN_EASY = 20;
+	private static final float TILE_DURATION_EASY = 45;
+	private static final int ANIM_SPEED_EASY = 45;
+	
+	private static final int SPEED_VAR_MEDIUM = 15;
+	private static final int SPEED_MIN_MEDIUM = 15;
+	private static final float TILE_DURATION_MEDIUM  = 40;
+	private static final int ANIM_SPEED_MEDIUM = 50;
+
+	private static final int SPEED_VAR_HARD = 10;
+	private static final int SPEED_MIN_HARD = 10;
+	private static final float TILE_DURATION_HARD = 35;
+	private static final int ANIM_SPEED_HARD = 55;
+	/* */
+	
 	private static final int RED_TO_BLACK = 20;
 	private static final int SPAWN_TWO_CHANCE = 20;
-	private static final int ANIM_SPEED = 7;
+	private static final int FRAME_LENGTH = 100;
 
 	private static final int TEXT_COLOR = 0xff6B6564;
 	private static final int ORANGE_COLOR = 0xffff8a00;
@@ -49,6 +73,8 @@ public class GameScreen extends Screen {
 		
 	private Tile[][] tiles;  
 	private Animation[][] animations;
+	private int speed_var, speed_min, anim_speed;
+	private float tile_duration;
 	private int num_black;		// TODO: Change?
 	private int width, height;
 	private int score, highScore;
@@ -127,7 +153,34 @@ public class GameScreen extends Screen {
 
 	public void newGame() {
 		score = 0;
-		highScore = shared.getHighscore();
+		
+		switch(shared.getMode()) {
+		case Shared.EASY:
+			highScore = shared.getEasyHS();
+			
+			speed_min = SPEED_MIN_EASY;
+			speed_var = SPEED_VAR_EASY;
+			tile_duration = TILE_DURATION_EASY;
+			anim_speed = ANIM_SPEED_EASY;
+			break;
+		case Shared.MEDIUM:
+			highScore = shared.getMediumHS();
+			
+			speed_min = SPEED_MIN_MEDIUM;
+			speed_var = SPEED_VAR_MEDIUM;
+			tile_duration = TILE_DURATION_MEDIUM;
+			anim_speed = ANIM_SPEED_MEDIUM;
+			break;
+		case Shared.HARD:
+			highScore = shared.getHardHS();
+			
+			speed_min = SPEED_MIN_HARD;
+			speed_var = SPEED_VAR_HARD;
+			tile_duration = TILE_DURATION_HARD;
+			anim_speed = ANIM_SPEED_HARD;
+			break;
+		}
+
 //		shared.setHighscore(0);
 		isHighScore = false;
 		num_black = 0;
@@ -141,7 +194,7 @@ public class GameScreen extends Screen {
 			}
 		}
 		
-		timer = MIN_SPAWN_SPEED + SPAWN_SPEED_VAR * rand.nextFloat();
+		timer = speed_min + speed_var * rand.nextFloat();
 	}
 
 	@Override
@@ -308,7 +361,7 @@ public class GameScreen extends Screen {
 				else {
 					float prevDuration = tile.getDuration();
 					tile.setDuration(prevDuration - deltaTime);
-					animations[r][c].update((long) (prevDuration - tile.getDuration()) * 3);
+					animations[r][c].update((long) (prevDuration - tile.getDuration()) * anim_speed);
 				}
 			}
 		}
@@ -332,7 +385,7 @@ public class GameScreen extends Screen {
 		
 		// Check when to change a tile
 		if (timer <= deltaTime) {
-			timer = MIN_SPAWN_SPEED + SPAWN_SPEED_VAR * rand.nextFloat();
+			timer = speed_min + speed_var * rand.nextFloat();
 			
 			newRandomTile();
 //			if(rand.nextInt(100) < SPAWN_TWO_CHANCE) newRandomTile();
@@ -596,24 +649,24 @@ public class GameScreen extends Screen {
 	
 	private Animation newAnimation() {
 		Animation anim_tile = new Animation();
-		anim_tile.addFrame(black_tile_1, ANIM_SPEED);
-		anim_tile.addFrame(black_tile_2, ANIM_SPEED);
-		anim_tile.addFrame(black_tile_3, ANIM_SPEED);
-		anim_tile.addFrame(black_tile_4, ANIM_SPEED);
-		anim_tile.addFrame(black_tile_5, ANIM_SPEED);
-		anim_tile.addFrame(black_tile_6, ANIM_SPEED);
-		anim_tile.addFrame(black_tile_7, ANIM_SPEED);
-		anim_tile.addFrame(black_tile_8, ANIM_SPEED);
-		anim_tile.addFrame(black_tile_9, ANIM_SPEED);
-		anim_tile.addFrame(black_tile_10, ANIM_SPEED);
-		anim_tile.addFrame(black_tile_11, ANIM_SPEED);
-		anim_tile.addFrame(black_tile_12, ANIM_SPEED);
-		anim_tile.addFrame(black_tile_13, ANIM_SPEED);
-		anim_tile.addFrame(black_tile_14, ANIM_SPEED);
-		anim_tile.addFrame(black_tile_15, ANIM_SPEED);
-		anim_tile.addFrame(black_tile_16, ANIM_SPEED);
-		anim_tile.addFrame(black_tile_17, ANIM_SPEED);
-		anim_tile.addFrame(black_tile, ANIM_SPEED*4);
+		anim_tile.addFrame(black_tile_1, FRAME_LENGTH);
+		anim_tile.addFrame(black_tile_2, FRAME_LENGTH);
+		anim_tile.addFrame(black_tile_3, FRAME_LENGTH);
+		anim_tile.addFrame(black_tile_4, FRAME_LENGTH);
+		anim_tile.addFrame(black_tile_5, FRAME_LENGTH);
+		anim_tile.addFrame(black_tile_6, FRAME_LENGTH);
+		anim_tile.addFrame(black_tile_7, FRAME_LENGTH);
+		anim_tile.addFrame(black_tile_8, FRAME_LENGTH);
+		anim_tile.addFrame(black_tile_9, FRAME_LENGTH);
+		anim_tile.addFrame(black_tile_10, FRAME_LENGTH);
+		anim_tile.addFrame(black_tile_11, FRAME_LENGTH);
+		anim_tile.addFrame(black_tile_12, FRAME_LENGTH);
+		anim_tile.addFrame(black_tile_13, FRAME_LENGTH);
+		anim_tile.addFrame(black_tile_14, FRAME_LENGTH);
+		anim_tile.addFrame(black_tile_15, FRAME_LENGTH);
+		anim_tile.addFrame(black_tile_16, FRAME_LENGTH);
+		anim_tile.addFrame(black_tile_17, FRAME_LENGTH);
+		anim_tile.addFrame(black_tile, FRAME_LENGTH*4);
 		
 		return anim_tile;
 	}
@@ -636,7 +689,7 @@ public class GameScreen extends Screen {
 			if (tiles[row][column].getType() == Tile.WHITE) {
 				animations[row][column] = newAnimation();
 				changeTile(row, column, rand_tile);
-				tiles[row][column].setDuration(TILE_DURATION);
+				tiles[row][column].setDuration(tile_duration);
 				return;
 			} 
 		}

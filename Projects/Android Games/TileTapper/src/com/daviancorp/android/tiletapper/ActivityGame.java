@@ -1,10 +1,13 @@
 package com.daviancorp.android.tiletapper;
 
+import android.util.Log;
+
 import com.daviancorp.framework.Screen;
 import com.daviancorp.framework.implementation.AndroidGame;
 
 public class ActivityGame extends AndroidGame {
-
+	private static final String TAG = "ActivityGame";
+	
 	boolean firstTimeCreate = true;
 
 	@Override
@@ -28,7 +31,7 @@ public class ActivityGame extends AndroidGame {
 	public void onResume() {
 		super.onResume();
 
-		if(Assets.theme.isStopped() && Shared.getInstance().isMusicOn()) {
+		if(!Assets.theme.isPlaying() && Shared.getInstance().isMusicOn()) {
 			Assets.theme.play();
 		}
 	}

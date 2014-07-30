@@ -6,10 +6,15 @@ import android.util.Log;
 public final class Shared {
 	private static final String TAG = "Shared";
 	
+	public static final int EASY = 1;
+	public static final int MEDIUM = 2;
+	public static final int HARD = 3;
+	
 	private static Shared instance = null;
 	
 	private GameSave gameSave;
-	private int highscore;
+	private int easyHS, mediumHS, hardHS;
+	private int mode;
 	private boolean musicOn, soundOn;
 	
 	private Shared() {
@@ -30,13 +35,37 @@ public final class Shared {
 	public void setGameSave(GameSave gameSave) {
 		this.gameSave = gameSave;
 	}
-
-	public int getHighscore() {
-		return highscore;
+	
+	public int getEasyHS() {
+		return easyHS;
 	}
 
-	public void setHighscore(int highscore) {
-		this.highscore = highscore;
+	public void setEasyHS(int easyHS) {
+		this.easyHS = easyHS;
+	}
+
+	public int getMediumHS() {
+		return mediumHS;
+	}
+
+	public void setMediumHS(int mediumHS) {
+		this.mediumHS = mediumHS;
+	}
+
+	public int getHardHS() {
+		return hardHS;
+	}
+
+	public void setHardHS(int hardHS) {
+		this.hardHS = hardHS;
+	}
+	
+	public int getMode() {
+		return mode;
+	}
+
+	public void setMode(int mode) {
+		this.mode = mode;
 	}
 
 	public boolean isMusicOn() {
@@ -70,6 +99,24 @@ public final class Shared {
 		}
 	}
 	
+	/* Toggle the mode option
+	 */
+	public void toggleMode() {
+		switch (mode) {
+			case EASY:
+				mode = MEDIUM;
+				break;
+			case MEDIUM:
+				mode = HARD;
+				break;
+			case HARD:
+				mode = EASY;
+				break;
+		}
+		
+		saveGame();
+	}
+	
 	/* Toggle the music option
 	 */
 	public void toggleMusic() {
@@ -87,20 +134,35 @@ public final class Shared {
 	
 	/* Check if score beats high score
 	 */
-	public boolean checkScore(int score) {
-		if (score > highscore) {
-			highscore = score;
-			saveGame();
-			return true;
+	public void checkScore(int score) {
+		switch (mode) {
+		case EASY:
+			if (score > easyHS) {
+				easyHS = score;
+				saveGame();
+			}
+			break;
+		case MEDIUM:
+			if (score > mediumHS) {
+				mediumHS = score;
+				saveGame();
+			}
+			break;
+		case HARD:
+			if (score > hardHS) {
+				hardHS = score;
+				saveGame();
+			}
+			break;
 		}
-		else return false;
+
 	}
 	
 	/* Save game info to system
 	 */
 	public boolean saveGame() {
 		try {
-			gameSave.saveGame(highscore, musicOn, soundOn);
+			gameSave.saveGame(easyHS, mediumHS, hardHS, mode, musicOn, soundOn);
 			return true;
 		} catch (Exception e) {
 			return false;
